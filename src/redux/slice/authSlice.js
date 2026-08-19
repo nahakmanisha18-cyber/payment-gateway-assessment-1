@@ -9,16 +9,30 @@ export const authSlice = createSlice({
         isError: null,
         isCreate: false,
         isAuthenticated: false,
+        isAuthChecked: false,
     },
     reducers: {
         getProfile: (state) => {
+
             const user = sessionStorage.getItem("USER");
+            const token = sessionStorage.getItem("TOKEN");
 
-            if (user) {
+            if (user && token) {
+
                 state.user = JSON.parse(user);
-            }
-        },
 
+                state.isAuthenticated = true;
+
+            } else {
+
+                state.user = null;
+
+                state.isAuthenticated = false;
+
+            }
+
+            state.isAuthChecked = true;
+        },
         clearError: (state) => {
             state.isError = null;
         }

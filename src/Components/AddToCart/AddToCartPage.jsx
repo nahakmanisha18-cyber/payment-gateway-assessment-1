@@ -15,7 +15,7 @@ import {
 } from "react-icons/fa";
 import { deleteCart, updateCart } from "@/redux/action/cartAction";
 import { useDispatch, useSelector } from "react-redux";
-
+import { getProfile } from "@/redux/slice/authSlice";
 import { getCart } from "@/redux/action/cartAction";
 
 import "./AddToCartPage.css";
@@ -34,17 +34,152 @@ const AddToCartPage = () => {
         (state) => state.cartStore
     );
 
+    const {
+        isAuthenticated,
+        isAuthChecked,
+    } = useSelector(
+        (state) => state.authStore
+    );
+
 
     // ==============================
-    // GET CART
+    // RESTORE AUTH
     // ==============================
 
     useEffect(() => {
 
-        dispatch(getCart());
+        dispatch(getProfile());
 
     }, [dispatch]);
 
+
+    // ==============================
+    // GET CART AFTER AUTH CHECK
+    // ==============================
+
+    useEffect(() => {
+
+        if (isAuthChecked && isAuthenticated) {
+
+            dispatch(getCart());
+
+        }
+
+    }, [
+        dispatch,
+        isAuthChecked,
+        isAuthenticated
+    ]);
+
+
+    // ==============================
+    // CHECKING LOGIN
+    // ==============================
+
+    if (!isAuthChecked) {
+
+        return (
+            <div className="product-loading-overlay">
+
+                <div className="product-loader"></div>
+
+                <p>
+                    Checking your account...
+                </p>
+
+            </div>
+        );
+
+    }
+    // ==============================
+    // LOGIN REQUIRED
+    // ==============================
+
+    if (!isAuthenticated) {
+
+        return (
+
+            <main className="cart-page">
+
+                <div className="cart-login-required">
+
+                    <div className="cart-login-icon">
+                        🔐
+                    </div>
+
+                    <span className="cart-login-label">
+                        YOUR CART IS WAITING
+                    </span>
+
+                    <h1>
+                        Login to View Your Cart
+                    </h1>
+
+                    <p>
+                        Please login to access your shopping cart,
+                        manage your products and continue to checkout.
+                    </p>
+
+                    <div className="cart-login-benefits">
+
+                        <div>
+                            <span>🛒</span>
+                            <div>
+                                <strong>
+                                    Save Your Cart
+                                </strong>
+                                <small>
+                                    Keep your selected products safe
+                                </small>
+                            </div>
+                        </div>
+
+                        <div>
+                            <span>🔒</span>
+                            <div>
+                                <strong>
+                                    Secure Checkout
+                                </strong>
+                                <small>
+                                    Safe and secure payment
+                                </small>
+                            </div>
+                        </div>
+
+                        <div>
+                            <span>🚚</span>
+                            <div>
+                                <strong>
+                                    Easy Delivery
+                                </strong>
+                                <small>
+                                    Track your orders easily
+                                </small>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div className="cart-login-actions">
+
+                        
+
+                        <Link
+                            href="/"
+                            className="cart-shopping-btn"
+                        >
+                            Continue Shopping
+                        </Link>
+
+                    </div>
+
+                </div>
+
+            </main>
+
+        );
+
+    }
     const handleDecrease = (item) => {
 
         if (item.quantity <= 1) {

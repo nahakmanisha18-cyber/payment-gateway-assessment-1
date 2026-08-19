@@ -7,108 +7,186 @@ import { dbConnect } from "@/lib/dbConnect";
 import { verifyToken } from "@/lib/verifyToken";
 
 export async function POST(request) {
-
     try {
-
         await dbConnect();
-        const user = await verifyToken(request);
-        if (!user) {
 
+        const user = await verifyToken(request);
+
+        if (!user) {
             return NextResponse.json(
-                {success: false,message: "Please login first"},
-                {status: 401}
+                {
+                    success: false,
+                    message: "Please login first",
+                },
+                {
+                    status: 401,
+                }
             );
         }
 
         const body = await request.json();
+
         const {
-            productId,
-            quantity = 1,
+            items,
             shippingAddress,
             paymentMethod = "razorpay",
             razorpayOrderId,
             razorpayPaymentId,
         } = body;
 
-        if (!productId) {
+        // ==============================
+        // VALIDATION
+        // ==============================
 
+        if (!items || !Array.isArray(items) || items.length === 0) {
             return NextResponse.json(
-                { success: false, message: "Product ID is required" },
-                {  status: 400}
+                {
+                    success: false,
+                    message: "Order items are required",
+                },
+                {
+                    status: 400,
+                }
             );
         }
 
         if (!shippingAddress) {
-
             return NextResponse.json(
-                {success: false, message: "Shipping address is required" },
-                {status: 400}
-            );
-        }
-        const product = await Product.findById(productId);
-
-        if (!product) {
-            return NextResponse.json(
-                {success: false, message: "Product not found" },
-                { status: 404 }
+                {
+                    success: false,
+                    message: "Shipping address is required",
+                },
+                {
+                    status: 400,
+                }
             );
         }
 
-        const price = Number(
-            product.discountPrice ||
-            product.price ||
-            0
-        );
+        // ==============================
+        // CREATE ORDER ITEMS
+        // ==============================
 
-        const subtotal =
-            price * Number(quantity);
+        const orderItems = [];
+
+        let subtotal = 0;
+
+        for (const item of items) {
+            if (!item.productId) {
+                return NextResponse.json(
+                    {
+                        success: false,
+                        message: "Product ID is missing",
+                    },
+                    {
+                        status: 400,
+                    }
+                );
+            }
+
+            const product = await Product.findById(item.productId);
+
+            if (!product) {
+                return NextResponse.json(
+                    {
+                        success: false,
+                        message: "Product not found",
+                    },
+                    {
+                        status: 404,
+                    }
+                );
+            }
+
+            const price = Number(
+                product.discountPrice ||
+                product.price ||
+                0
+            );
+
+            const quantity = Number(item.quantity || 1);
+
+            const itemTotal = price * quantity;
+
+            subtotal += itemTotal;
+
+            orderItems.push({
+                product: product._id,
+
+                productName:
+                    product.productName,
+
+                image:
+                    product.images?.[0] || "",
+
+                price,
+
+                quantity,
+            });
+        }
+
+        // ==============================
+        // DELIVERY
+        // ==============================
 
         const deliveryCharge =
-            subtotal >= 500 ? 0 : 50;
+            subtotal >= 500 ? 0 : 40;
 
         const totalAmount =
             subtotal + deliveryCharge;
 
-        const order = await Order.create({
+        // ==============================
+        // CREATE ORDER
+        // ==============================
 
+        const order = await Order.create({
             user: user.id || user._id,
 
-            items: [
-                {
-                    product: product._id,
-
-                    productName:
-                        product.productName,
-
-                    image:
-                        product.images?.[0] || "",
-
-                    price,
-
-                    quantity:
-                        Number(quantity),
-                },
-            ],
+            items: orderItems,
 
             shippingAddress: {
-                fullName: shippingAddress.fullName,
-                mobile: shippingAddress.mobile,
-                address: shippingAddress.address,
-                city: shippingAddress.city,
-                state: shippingAddress.state,
-                pincode: shippingAddress.pincode,
+                fullName:
+                    shippingAddress.fullName,
+
+                mobile:
+                    shippingAddress.mobile,
+
+                address:
+                    shippingAddress.address,
+
+                city:
+                    shippingAddress.city,
+
+                state:
+                    shippingAddress.state,
+
+                pincode:
+                    shippingAddress.pincode,
             },
 
             subtotal,
-            deliveryCharge,
-            totalAmount,
-            paymentMethod,
-            paymentStatus: razorpayPaymentId ? "paid" : "pending",
-            razorpayOrderId: razorpayOrderId || "",
-            razorpayPaymentId: razorpayPaymentId || "",
-            orderStatus: razorpayPaymentId ? "confirmed" : "pending",
-        });
 
+            deliveryCharge,
+
+            totalAmount,
+
+            paymentMethod,
+
+            paymentStatus:
+                razorpayPaymentId
+                    ? "paid"
+                    : "pending",
+
+            razorpayOrderId:
+                razorpayOrderId || "",
+
+            razorpayPaymentId:
+                razorpayPaymentId || "",
+
+            orderStatus:
+                razorpayPaymentId
+                    ? "confirmed"
+                    : "pending",
+        });
 
         await order.populate("items.product");
 
@@ -131,8 +209,15 @@ export async function POST(request) {
         );
 
         return NextResponse.json(
-            { success: false, message: "Failed to create order" },
-            {status: 500}
+            {
+                success: false,
+                message:
+                    error?.message ||
+                    "Failed to create order",
+            },
+            {
+                status: 500,
+            }
         );
     }
 }

@@ -10,6 +10,7 @@ export async function GET(request) {
     try {
 
         await dbConnect();
+
         const user = await verifyToken(request);
 
         if (!user) {
@@ -26,10 +27,12 @@ export async function GET(request) {
         }
 
         const userId = user.id || user._id;
-
         const orders = await Order
             .find({
                 user: userId,
+                orderStatus: {
+                    $ne: "cancelled",
+                },
             })
             .populate("items.product")
             .sort({
@@ -53,7 +56,10 @@ export async function GET(request) {
 
     } catch (error) {
 
-        console.error( "GET ORDERS ERROR:",  error );
+        console.error(
+            "GET ORDERS ERROR:",
+            error
+        );
 
         return NextResponse.json(
             {

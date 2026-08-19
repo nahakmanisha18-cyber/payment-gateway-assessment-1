@@ -31,6 +31,12 @@ const BuynowFormPage = ({ productId }) => {
     
     const [paymentMethod, setPaymentMethod] = useState("razorpay");
     const [isPaymentLoading, setIsPaymentLoading] = useState(false);
+    const [popup, setPopup] = useState({
+        show: false,
+        type: "",
+        title: "",
+        message: "",
+    });
 
     const {
         product,
@@ -150,17 +156,20 @@ const BuynowFormPage = ({ productId }) => {
             !formData.pincode
         ) {
 
-            alert("Please fill all delivery details");
+            setPopup({
+                show: true,
+                type: "error",
+                title: "Missing Delivery Details",
+                message: "Please fill in all delivery details before continuing.",
+            });
+
+            
 
             return;
         }
 
 
         try {
-
-            // =====================================
-            // 1. CREATE RAZORPAY ORDER
-            // =====================================
 
             const result = await dispatch(
                 createPaymentOrder(totalPrice)
@@ -174,11 +183,6 @@ const BuynowFormPage = ({ productId }) => {
 
 
             const order = result.order;
-
-
-            // =====================================
-            // 2. RAZORPAY OPTIONS
-            // =====================================
 
             const options = {
 
@@ -202,10 +206,6 @@ const BuynowFormPage = ({ productId }) => {
                     order.id,
 
 
-                // =================================
-                // PAYMENT SUCCESS
-                // =================================
-
                 handler: async function (
                     paymentResponse
                 ) {
@@ -216,11 +216,6 @@ const BuynowFormPage = ({ productId }) => {
                             "RAZORPAY PAYMENT:",
                             paymentResponse
                         );
-
-
-                        // =========================
-                        // 3. VERIFY PAYMENT
-                        // =========================
 
                         const verifyResult =
                             await dispatch(
@@ -250,62 +245,48 @@ const BuynowFormPage = ({ productId }) => {
 
                         if (!verifyResult.success) {
 
-                            alert(
-                                "Payment verification failed"
-                            );
+                            setPopup({
+                                show: true,
+                                type: "error",
+                                title: "Payment Verification Failed",
+                                message:
+                                    "We could not verify your payment. Please try again.",
+                            });
 
                             return;
                         }
 
-
-                        // =========================
-                        // 4. CREATE ORDER DATABASE
-                        // =========================
-
                         const orderData = {
-
-                            productId:
-                                productId,
-
-                            quantity:
-                                quantity,
+                            items: [
+                                {
+                                    productId: productId,
+                                    quantity: quantity,
+                                },
+                            ],
 
                             shippingAddress: {
-
-                                fullName:
-                                    formData.fullName,
-
-                                mobile:
-                                    formData.mobile,
-
-                                address:
-                                    formData.address,
-
-                                city:
-                                    formData.city,
-
-                                state:
-                                    formData.state,
-
-                                pincode:
-                                    formData.pincode,
-
+                                fullName: formData.fullName,
+                                mobile: formData.mobile,
+                                address: formData.address,
+                                city: formData.city,
+                                state: formData.state,
+                                pincode: formData.pincode,
                             },
 
-                            paymentMethod:
-                                "razorpay",
+                            paymentMethod: "razorpay",
 
                             razorpayOrderId:
-                                paymentResponse
-                                    .razorpay_order_id,
+                                paymentResponse.razorpay_order_id,
 
                             razorpayPaymentId:
-                                paymentResponse
-                                    .razorpay_payment_id,
-
+                                paymentResponse.razorpay_payment_id,
                         };
 
-
+                        console.log("========== BUY NOW ORDER DATA ==========");
+                        console.log("Product ID:", productId);
+                        console.log("Quantity:", quantity);
+                        console.log("Order Data:", orderData);
+                        console.log("========================================");
                         console.log(
                             "ORDER DATA:",
                             orderData
@@ -324,35 +305,28 @@ const BuynowFormPage = ({ productId }) => {
                         );
 
 
-                        if (
-                            !orderResult.success
-                        ) {
+                        if (!orderResult.success) {
 
-                            alert(
-                                orderResult.message ||
-                                "Order creation failed"
-                            );
+                            setPopup({
+                                show: true,
+                                type: "error",
+                                title: "Order Failed",
+                                message:
+                                    orderResult.message ||
+                                    "Order creation failed.",
+                            });
 
                             return;
                         }
 
+                        setPopup({
+                            show: true,
+                            type: "success",
+                            title: "Payment Successful 🎉",
+                            message: "Your payment was successful and your order has been placed successfully.",
+                            orderId: orderResult.order._id,
+                        });
 
-                        // =========================
-                        // 5. SUCCESS
-                        // =========================
-
-                        alert(
-                            "Payment Successful 🎉\nOrder Placed Successfully ✅"
-                        );
-
-
-                        // =========================
-                        // 6. ORDER SUCCESS PAGE
-                        // =========================
-
-                        router.push(
-                            `/order-success/${orderResult.order._id}`
-                        );
 
                     } catch (error) {
 
@@ -361,11 +335,14 @@ const BuynowFormPage = ({ productId }) => {
                             error
                         );
 
-                        alert(
-                            error?.message ||
-                            "Payment verification failed"
-                        );
-
+                        setPopup({
+                            show: true,
+                            type: "error",
+                            title: "Payment Failed",
+                            message:
+                                error?.message ||
+                                "Payment verification failed",
+                        });
                     }
 
                 },
@@ -390,12 +367,6 @@ const BuynowFormPage = ({ productId }) => {
                 },
 
             };
-
-
-            // =====================================
-            // 7. OPEN RAZORPAY
-            // =====================================
-
             const razorpay =
                 new window.Razorpay(options);
 
@@ -409,11 +380,12 @@ const BuynowFormPage = ({ productId }) => {
                 error
             );
 
-            alert(
-                error?.message ||
-                "Payment start nahi ho paya"
-            );
-
+            setPopup({
+                show: true,
+                type: "error",
+                title: "Payment Failed",
+                message: "Unable to start the payment. Please try again.",
+            });
         }
 
     };
@@ -435,6 +407,56 @@ const BuynowFormPage = ({ productId }) => {
                 src="https://checkout.razorpay.com/v1/checkout.js"
                 strategy="afterInteractive"
             />
+            {popup.show && (
+                <div className="payment-popup-overlay">
+
+                    <div className={`payment-popup ${popup.type}`}>
+
+                        <div className="payment-popup-icon">
+
+                            {popup.type === "success" ? "✓" : "!"}
+
+                        </div>
+
+                        <h2>
+                            {popup.title}
+                        </h2>
+
+                        <p>
+                            {popup.message}
+                        </p>
+
+                        <button
+                            className="payment-popup-btn"
+                            onClick={() => {
+
+                                if (
+                                    popup.type === "success" &&
+                                    popup.orderId
+                                ) {
+                                    router.push(
+                                        `/order-success/${popup.orderId}`
+                                    );
+                                } else {
+                                    setPopup({
+                                        show: false,
+                                        type: "",
+                                        title: "",
+                                        message: "",
+                                    });
+                                }
+
+                            }}
+                        >
+                            {popup.type === "success"
+                                ? "View Order"
+                                : "Okay"}
+                        </button>
+
+                    </div>
+
+                </div>
+            )}
 
             <main className="buy-now-page">
 

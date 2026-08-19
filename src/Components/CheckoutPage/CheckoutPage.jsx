@@ -17,7 +17,9 @@ import "./Checkoutpage.css";
 import { useDispatch, useSelector } from "react-redux";
 import { getCart, clearCart } from "@/redux/action/cartAction";
 import { useRouter } from "next/navigation";
-
+import {
+    createOrder,
+} from "@/redux/action/orderAction";
 
 const CheckoutPage = () => {
     const dispatch = useDispatch();
@@ -42,6 +44,14 @@ const CheckoutPage = () => {
         city: "",
         state: "",
         pincode: "",
+    });
+
+    const [popup, setPopup] = useState({
+        show: false,
+        type: "",
+        title: "",
+        message: "",
+        orderId: null,
     });
 
     useEffect(() => {
@@ -95,133 +105,268 @@ const CheckoutPage = () => {
             !addressForm.state ||
             !addressForm.pincode
         ) {
-            alert("Please fill all address details");
+
+            setPopup({
+                show: true,
+                type: "error",
+                title: "Incomplete Details",
+                message: "Please fill all address details.",
+                orderId: null,
+            });
+
             return;
         }
 
-        // Address save karo
-        sessionStorage.setItem(
-            "CHECKOUT_ADDRESS",
-            JSON.stringify(addressForm)
-        );
-
         try {
 
-            // 1️⃣ Razorpay order create
+            sessionStorage.setItem(
+                "CHECKOUT_ADDRESS",
+                JSON.stringify(addressForm)
+            );
+
+            // ================================
+            // 1. CREATE RAZORPAY ORDER
+            // ================================
+
             const result = await dispatch(
                 createPaymentOrder(grandTotal)
             ).unwrap();
 
-            console.log("Create Order Response:", result);
+            const razorpayOrder = result.order;
 
-            const order = result.order;
+            // ================================
+            // 2. RAZORPAY OPTIONS
+            // ================================
 
-            // 2️⃣ Razorpay options
             const options = {
 
-                key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+                key:
+                    process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
 
-                amount: order.amount,
+                amount:
+                    razorpayOrder.amount,
 
-                currency: order.currency,
+                currency:
+                    razorpayOrder.currency,
 
-                name: "My E-Commerce Store",
+                name:
+                    "My E-Commerce Store",
 
-                description: "Order Payment",
+                description:
+                    "Order Payment",
 
-                order_id: order.id,
+                order_id:
+                    razorpayOrder.id,
 
                 handler: async function (paymentResponse) {
 
-                    console.log(
-                        "Payment Response:",
-                        paymentResponse
-                    );
-
                     try {
 
-                        // 3️⃣ Payment verify
-                        const verifyResult = await dispatch(
-                            verifyPayment(paymentResponse)
-                        ).unwrap();
+                        const verifyResult =
+                            await dispatch(
+                                verifyPayment(paymentResponse)
+                            ).unwrap();
 
-                        if (verifyResult.success) {
 
-                            console.log("PAYMENT SUCCESSFUL");
+                        if (!verifyResult.success) {
 
-                            try {
+                            setPopup({
+                                show: true,
+                                type: "error",
+                                title: "Payment Failed",
+                                message:
+                                    "Payment verification failed. Please try again.",
+                                orderId: null,
+                            });
 
-                                const clearResult = await dispatch(
-                                    clearCart()
-                                ).unwrap();
+                            return;
+                        }
 
-                                console.log(
-                                    "CART CLEAR RESULT:",
-                                    clearResult
-                                );
 
-                            } catch (error) {
+                        const orderData = {
 
-                                console.error(
-                                    "CLEAR CART ERROR:",
-                                    error
-                                );
+                            items: cartItems.map((item) => ({
+                                productId: item.product?._id,
+                                quantity: item.quantity,
+                            })),
 
-                            }
+                            shippingAddress: {
 
-                            alert("Payment successful!");
+                                fullName:
+                                    addressForm.fullName,
 
-                            router.push("/cart");
-                        } else {
+                                mobile:
+                                    addressForm.mobileNumber,
 
-                            alert("Payment verification failed");
+                                address:
+                                    addressForm.address,
+
+                                city:
+                                    addressForm.city,
+
+                                state:
+                                    addressForm.state,
+
+                                pincode:
+                                    addressForm.pincode,
+                            },
+
+                            paymentMethod: "razorpay",
+
+                            razorpayOrderId:
+                                paymentResponse.razorpay_order_id,
+
+                            razorpayPaymentId:
+                                paymentResponse.razorpay_payment_id,
+                        };
+
+
+                        console.log(
+                            "ORDER DATA:",
+                            orderData
+                        );
+
+
+                        const orderResult =
+                            await dispatch(
+                                createOrder(orderData)
+                            ).unwrap();
+
+
+                        console.log(
+                            "ORDER CREATED:",
+                            orderResult
+                        );
+
+
+                        // ================================
+                        // 5. ORDER CREATE FAILED
+                        // ================================
+
+                        if (!orderResult.success) {
+
+                            setPopup({
+                                show: true,
+                                type: "error",
+                                title: "Order Creation Failed",
+                                message:
+                                    orderResult.message ||
+                                    "Payment was successful, but order creation failed.",
+                                orderId: null,
+                            });
+
+                            return;
+                        }
+
+
+                        // ================================
+                        // 6. CLEAR CART
+                        // ================================
+
+                        try {
+
+                            await dispatch(
+                                clearCart()
+                            ).unwrap();
+
+                            console.log(
+                                "CART CLEARED"
+                            );
+
+                        } catch (cartError) {
+
+                            console.error(
+                                "CLEAR CART ERROR:",
+                                cartError
+                            );
 
                         }
+
+
+                        // ================================
+                        // 7. SUCCESS POPUP
+                        // ================================
+
+                        setPopup({
+                            show: true,
+                            type: "success",
+                            title: "Payment Successful 🎉",
+                            message:
+                                "Your payment was successful and your order has been placed successfully.",
+                            orderId:
+                                orderResult.order?._id,
+                        });
 
                     } catch (error) {
 
                         console.error(
-                            "Verification Error:",
+                            "PAYMENT VERIFICATION / ORDER ERROR:",
                             error
                         );
 
-                        alert("Payment verification failed");
+                        setPopup({
+                            show: true,
+                            type: "error",
+                            title: "Payment Failed",
+                            message:
+                                error?.message ||
+                                "Payment verification failed.",
+                            orderId: null,
+                        });
 
                     }
 
                 },
 
                 prefill: {
-                    name: addressForm.fullName,
-                    contact: addressForm.mobileNumber,
+
+                    name:
+                        addressForm.fullName,
+
+                    contact:
+                        addressForm.mobileNumber,
+
                 },
 
                 theme: {
-                    color: "#3399cc",
+
+                    color:
+                        "#3399cc",
+
                 },
 
             };
 
-            // 4️⃣ Razorpay open
+
+            // ================================
+            // 8. OPEN RAZORPAY
+            // ================================
+
             const razorpay =
                 new window.Razorpay(options);
 
             razorpay.open();
 
+
         } catch (error) {
 
             console.error(
-                "Payment Error:",
+                "PAYMENT ERROR:",
                 error
             );
 
-            alert(
-                error?.message ||
-                "Payment start nahi ho paya"
-            );
+            setPopup({
+                show: true,
+                type: "error",
+                title: "Payment Error",
+                message:
+                    error?.message ||
+                    "Payment could not be started.",
+                orderId: null,
+            });
+
         }
     };
-
     useEffect(() => {
 
         dispatch(getCart());
@@ -269,91 +414,165 @@ const CheckoutPage = () => {
 
     return (
         <>
-        
-    
-        <Script
-    src="https://checkout.razorpay.com/v1/checkout.js"
-    strategy="afterInteractive"
-/>
 
-        <main className="checkout-page">
 
-            <div className="checkout-container">
+            <Script
+                src="https://checkout.razorpay.com/v1/checkout.js"
+                strategy="afterInteractive"
+            />
 
-                {/* ================= HEADER ================= */}
+            {popup.show && (
+                <div className="checkout-popup-overlay">
 
-                <div className="checkout-header">
-
-                    <Link
-                        href="/cart"
-                        className="checkout-back"
+                    <div
+                        className={`checkout-popup ${popup.type}`}
                     >
-                        <FaArrowLeft />
-                        Back to Cart
-                    </Link>
 
-                    <h1>
-                        Checkout
-                    </h1>
+                        <div className="checkout-popup-icon">
 
-                    <p>
-                        Complete your order securely
-                    </p>
+                            {popup.type === "success"
+                                ? "✓"
+                                : "!"}
+
+                        </div>
+
+                        <h2>
+                            {popup.title}
+                        </h2>
+
+                        <p>
+                            {popup.message}
+                        </p>
+
+                        <button
+                            className="checkout-popup-btn"
+                            onClick={() => {
+
+                                if (popup.type === "success") {
+
+                                    router.push("/orders");
+
+                                } else {
+
+                                    setPopup({
+                                        show: false,
+                                        type: "",
+                                        title: "",
+                                        message: "",
+                                        orderId: null,
+                                    });
+
+                                }
+
+                            }}
+                        >
+                            {popup.type === "success"
+                                ? "View Orders"
+                                : "Okay"}
+                        </button>
+
+                    </div>
 
                 </div>
+            )}
+
+            <main className="checkout-page">
+
+                <div className="checkout-container">
+
+                    {/* ================= HEADER ================= */}
+
+                    <div className="checkout-header">
+
+                        <Link
+                            href="/cart"
+                            className="checkout-back"
+                        >
+                            <FaArrowLeft />
+                            Back to Cart
+                        </Link>
+
+                        <h1>
+                            Checkout
+                        </h1>
+
+                        <p>
+                            Complete your order securely
+                        </p>
+
+                    </div>
 
 
-                {/* ================= CHECKOUT GRID ================= */}
+                    {/* ================= CHECKOUT GRID ================= */}
 
-                <div className="checkout-grid">
-
-
-                    {/* ================= LEFT ================= */}
-
-                    <div className="checkout-left">
+                    <div className="checkout-grid">
 
 
-                        {/* DELIVERY ADDRESS */}
+                        {/* ================= LEFT ================= */}
 
-                        <section className="checkout-card">
+                        <div className="checkout-left">
 
-                            <div className="checkout-card-title">
 
-                                <div className="checkout-title-icon">
-                                    <FaMapMarkerAlt />
+                            {/* DELIVERY ADDRESS */}
+
+                            <section className="checkout-card">
+
+                                <div className="checkout-card-title">
+
+                                    <div className="checkout-title-icon">
+                                        <FaMapMarkerAlt />
+                                    </div>
+
+                                    <div>
+                                        <h2>
+                                            Delivery Address
+                                        </h2>
+
+                                        <p>
+                                            Where should we deliver your order?
+                                        </p>
+                                    </div>
+
                                 </div>
 
-                                <div>
-                                    <h2>
-                                        Delivery Address
-                                    </h2>
 
-                                    <p>
-                                        Where should we deliver your order?
-                                    </p>
-                                </div>
-
-                            </div>
+                                <div className="address-form">
 
 
-                            <div className="address-form">
+                                    <div className="form-row">
+
+                                        <div className="form-group">
+
+                                            <label>
+                                                Full Name
+                                            </label>
+
+                                            <input
+                                                type="text"
+                                                name="fullName"
+                                                value={addressForm.fullName}
+                                                onChange={handleAddressChange}
+                                                placeholder="Enter your full name"
+                                            />
+
+                                        </div>
 
 
-                                <div className="form-row">
+                                        <div className="form-group">
 
-                                    <div className="form-group">
+                                            <label>
+                                                Mobile Number
+                                            </label>
 
-                                        <label>
-                                            Full Name
-                                        </label>
+                                            <input
+                                                type="tel"
+                                                name="mobileNumber"
+                                                value={addressForm.mobileNumber}
+                                                onChange={handleAddressChange}
+                                                placeholder="Enter mobile number"
+                                            />
 
-                                        <input
-                                            type="text"
-                                            name="fullName"
-                                            value={addressForm.fullName}
-                                            onChange={handleAddressChange}
-                                            placeholder="Enter your full name"
-                                        />
+                                        </div>
 
                                     </div>
 
@@ -361,406 +580,387 @@ const CheckoutPage = () => {
                                     <div className="form-group">
 
                                         <label>
-                                            Mobile Number
+                                            Address
                                         </label>
 
-                                        <input
-                                            type="tel"
-                                            name="mobileNumber"
-                                            value={addressForm.mobileNumber}
+                                        <textarea
+                                            rows="3"
+                                            name="address"
+                                            value={addressForm.address}
                                             onChange={handleAddressChange}
-                                            placeholder="Enter mobile number"
-                                        />
-
-                                    </div>
-
-                                </div>
-
-
-                                <div className="form-group">
-
-                                    <label>
-                                        Address
-                                    </label>
-
-                                    <textarea
-                                        rows="3"
-                                        name="address"
-                                        value={addressForm.address}
-                                        onChange={handleAddressChange}
-                                        placeholder="House No, Street, Area"
-                                    />
-
-                                </div>
-
-
-                                <div className="form-row">
-
-                                    <div className="form-group">
-
-                                        <label>
-                                            City
-                                        </label>
-
-                                        <input
-                                            type="text"
-                                            name="city"
-                                            value={addressForm.city}
-                                            onChange={handleAddressChange}
-                                            placeholder="Enter city"
+                                            placeholder="House No, Street, Area"
                                         />
 
                                     </div>
 
 
-                                    <div className="form-group">
+                                    <div className="form-row">
 
-                                        <label>
-                                            State
-                                        </label>
+                                        <div className="form-group">
 
-                                        <input
-                                            type="text"
-                                            name="state"
-                                            value={addressForm.state}
-                                            onChange={handleAddressChange}
-                                            placeholder="Enter state"
-                                        />
+                                            <label>
+                                                City
+                                            </label>
+
+                                            <input
+                                                type="text"
+                                                name="city"
+                                                value={addressForm.city}
+                                                onChange={handleAddressChange}
+                                                placeholder="Enter city"
+                                            />
+
+                                        </div>
+
+
+                                        <div className="form-group">
+
+                                            <label>
+                                                State
+                                            </label>
+
+                                            <input
+                                                type="text"
+                                                name="state"
+                                                value={addressForm.state}
+                                                onChange={handleAddressChange}
+                                                placeholder="Enter state"
+                                            />
+
+                                        </div>
+
+
+                                        <div className="form-group">
+
+                                            <label>
+                                                Pincode
+                                            </label>
+
+                                            <input
+                                                type="text"
+                                                name="pincode"
+                                                value={addressForm.pincode}
+                                                onChange={handleAddressChange}
+                                                placeholder="Pincode"
+                                            />
+
+                                        </div>
 
                                     </div>
 
 
-                                    <div className="form-group">
+                                    <button
+                                        type="button"
+                                        className="save-address-btn"
+                                        onClick={handleSaveAddress}
+                                    >
 
-                                        <label>
-                                            Pincode
-                                        </label>
+                                        <FaCheckCircle />
 
-                                        <input
-                                            type="text"
-                                            name="pincode"
-                                            value={addressForm.pincode}
-                                            onChange={handleAddressChange}
-                                            placeholder="Pincode"
-                                        />
+                                        Save & Continue
 
-                                    </div>
+                                    </button>
 
                                 </div>
 
-
-                                <button
-                                    type="button"
-                                    className="save-address-btn"
-                                    onClick={handleSaveAddress}
-                                >
-
-                                    <FaCheckCircle />
-
-                                    Save & Continue
-
-                                </button>
-
-                            </div>
-
-                        </section>
+                            </section>
 
 
 
-                        {/* PAYMENT INFORMATION */}
+                            {/* PAYMENT INFORMATION */}
 
-                        <section className="checkout-card">
+                            <section className="checkout-card">
 
-                            <div className="checkout-card-title">
+                                <div className="checkout-card-title">
 
-                                <div className="checkout-title-icon">
-                                    <FaCreditCard />
-                                </div>
-
-                                <div>
-
-                                    <h2>
-                                        Payment Method
-                                    </h2>
-
-                                    <p>
-                                        Secure payment powered by Razorpay
-                                    </p>
-
-                                </div>
-
-                            </div>
-
-
-                            <div className="payment-option">
-
-                                <div className="payment-option-left">
-
-                                    <div className="payment-icon">
+                                    <div className="checkout-title-icon">
                                         <FaCreditCard />
                                     </div>
 
                                     <div>
 
-                                        <strong>
-                                            Razorpay
-                                        </strong>
+                                        <h2>
+                                            Payment Method
+                                        </h2>
 
-                                        <span>
-                                            UPI, Cards, Net Banking & Wallets
-                                        </span>
+                                        <p>
+                                            Secure payment powered by Razorpay
+                                        </p>
 
                                     </div>
 
                                 </div>
 
 
-                                <div className="payment-selected">
+                                <div className="payment-option">
 
-                                    <FaCheckCircle />
+                                    <div className="payment-option-left">
 
-                                    Selected
+                                        <div className="payment-icon">
+                                            <FaCreditCard />
+                                        </div>
 
-                                </div>
+                                        <div>
 
-                            </div>
-
-
-                        </section>
-
-
-
-                        {/* SECURITY */}
-
-                        <div className="checkout-security">
-
-                            <FaShieldAlt />
-
-                            <div>
-
-                                <strong>
-                                    Safe & Secure Payment
-                                </strong>
-
-                                <span>
-                                    Your payment information is encrypted
-                                    and securely processed by Razorpay.
-                                </span>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-
-
-                    {/* ================= RIGHT ================= */}
-
-                    <aside className="checkout-right">
-
-
-                        <div className="order-summary-card">
-
-                            <h2>
-                                Order Summary
-                            </h2>
-
-
-                            {/* PRODUCT */}
-
-                            {/* ================= PRODUCT ================= */}
-
-                            <div className="checkout-products">
-
-                                {cartItems.map((item) => {
-
-                                    const product = item.product;
-
-                                    const price = Number(
-                                        product?.discountPrice ||
-                                        product?.price ||
-                                        0
-                                    );
-
-                                    const itemTotal =
-                                        price * item.quantity;
-
-                                    return (
-
-                                        <div
-                                            className="checkout-product"
-                                            key={product?._id}
-                                        >
-
-                                            {/* IMAGE */}
-
-                                            <div className="checkout-product-image">
-
-                                                <img
-                                                    src={
-                                                        product?.images?.[0] ||
-                                                        "/images/no-image.png"
-                                                    }
-                                                    alt={
-                                                        product?.productName ||
-                                                        "Product"
-                                                    }
-                                                />
-
-                                            </div>
-
-
-                                            {/* PRODUCT INFO */}
-
-                                            <div className="checkout-product-info">
-
-                                                <strong>
-                                                    {product?.productName}
-                                                </strong>
-
-                                                <span>
-                                                    Quantity: {item.quantity}
-                                                </span>
-
-                                                <span>
-                                                    ₹{price.toLocaleString("en-IN")}
-                                                </span>
-
-                                            </div>
-
-
-                                            {/* ITEM TOTAL */}
-
-                                            <strong className="checkout-item-total">
-
-                                                ₹{itemTotal.toLocaleString("en-IN")}
-
+                                            <strong>
+                                                Razorpay
                                             </strong>
+
+                                            <span>
+                                                UPI, Cards, Net Banking & Wallets
+                                            </span>
 
                                         </div>
 
-                                    );
-
-                                })}
-
-                            </div>
-
-                            {/* PRICE */}
-                            
-
-                            <div className="price-summary">
-
-                                <div>
-                                    <span>
-                                        Subtotal
-                                    </span>
-
-                                    <strong>
-                                        ₹{subtotal.toLocaleString("en-IN")}
-                                    </strong>
-                                </div>
+                                    </div>
 
 
-                                {discount > 0 && (
-                                    <div className="discount-row">
+                                    <div className="payment-selected">
 
-                                        <span>
-                                            Discount
-                                        </span>
+                                        <FaCheckCircle />
 
-                                        <strong>
-                                            - ₹{discount.toLocaleString("en-IN")}
-                                        </strong>
+                                        Selected
 
                                     </div>
-                                )}
-
-
-                                <div>
-
-                                    <span>
-                                        Delivery
-                                    </span>
-
-                                    <strong>
-                                        {delivery === 0
-                                            ? "FREE"
-                                            : `₹${delivery}`
-                                        }
-                                    </strong>
 
                                 </div>
 
-                            </div>
+
+                            </section>
 
 
-                            {/* TOTAL */}
 
-                            <div className="checkout-total">
+                            {/* SECURITY */}
 
-                                <span>
-                                    Total
-                                </span>
-
-                                <strong>
-                                    ₹{grandTotal.toLocaleString("en-IN")}
-                                </strong>
-
-                            </div>
-                        
-
-                            {/* PAY BUTTON */}
-
-                            <button
-                                className="proceed-payment-btn"
-                            >
-
-                                <FaCreditCard />
-
-                                Proceed to Payment
-
-                            </button>
-
-
-                            <div className="secure-checkout">
+                            <div className="checkout-security">
 
                                 <FaShieldAlt />
 
-                                Safe & Secure Checkout
+                                <div>
+
+                                    <strong>
+                                        Safe & Secure Payment
+                                    </strong>
+
+                                    <span>
+                                        Your payment information is encrypted
+                                        and securely processed by Razorpay.
+                                    </span>
+
+                                </div>
 
                             </div>
 
                         </div>
 
 
-                        {/* DELIVERY */}
 
-                        <div className="delivery-box">
+                        {/* ================= RIGHT ================= */}
 
-                            <FaTruck />
+                        <aside className="checkout-right">
 
-                            <div>
 
-                                <strong>
-                                    Free Delivery
-                                </strong>
+                            <div className="order-summary-card">
 
-                                <span>
-                                    On orders above ₹500
-                                </span>
+                                <h2>
+                                    Order Summary
+                                </h2>
+
+
+                                {/* PRODUCT */}
+
+                                {/* ================= PRODUCT ================= */}
+
+                                <div className="checkout-products">
+
+                                    {cartItems.map((item) => {
+
+                                        const product = item.product;
+
+                                        const price = Number(
+                                            product?.discountPrice ||
+                                            product?.price ||
+                                            0
+                                        );
+
+                                        const itemTotal =
+                                            price * item.quantity;
+
+                                        return (
+
+                                            <div
+                                                className="checkout-product"
+                                                key={product?._id}
+                                            >
+
+                                                {/* IMAGE */}
+
+                                                <div className="checkout-product-image">
+
+                                                    <img
+                                                        src={
+                                                            product?.images?.[0] ||
+                                                            "/images/no-image.png"
+                                                        }
+                                                        alt={
+                                                            product?.productName ||
+                                                            "Product"
+                                                        }
+                                                    />
+
+                                                </div>
+
+
+                                                {/* PRODUCT INFO */}
+
+                                                <div className="checkout-product-info">
+
+                                                    <strong>
+                                                        {product?.productName}
+                                                    </strong>
+
+                                                    <span>
+                                                        Quantity: {item.quantity}
+                                                    </span>
+
+                                                    <span>
+                                                        ₹{price.toLocaleString("en-IN")}
+                                                    </span>
+
+                                                </div>
+
+
+                                                {/* ITEM TOTAL */}
+
+                                                <strong className="checkout-item-total">
+
+                                                    ₹{itemTotal.toLocaleString("en-IN")}
+
+                                                </strong>
+
+                                            </div>
+
+                                        );
+
+                                    })}
+
+                                </div>
+
+                                {/* PRICE */}
+
+
+                                <div className="price-summary">
+
+                                    <div>
+                                        <span>
+                                            Subtotal
+                                        </span>
+
+                                        <strong>
+                                            ₹{subtotal.toLocaleString("en-IN")}
+                                        </strong>
+                                    </div>
+
+
+                                    {discount > 0 && (
+                                        <div className="discount-row">
+
+                                            <span>
+                                                Discount
+                                            </span>
+
+                                            <strong>
+                                                - ₹{discount.toLocaleString("en-IN")}
+                                            </strong>
+
+                                        </div>
+                                    )}
+
+
+                                    <div>
+
+                                        <span>
+                                            Delivery
+                                        </span>
+
+                                        <strong>
+                                            {delivery === 0
+                                                ? "FREE"
+                                                : `₹${delivery}`
+                                            }
+                                        </strong>
+
+                                    </div>
+
+                                </div>
+
+
+                                {/* TOTAL */}
+
+                                <div className="checkout-total">
+
+                                    <span>
+                                        Total
+                                    </span>
+
+                                    <strong>
+                                        ₹{grandTotal.toLocaleString("en-IN")}
+                                    </strong>
+
+                                </div>
+
+
+                                {/* PAY BUTTON */}
+
+                                <button
+                                    className="proceed-payment-btn"
+                                >
+
+                                    <FaCreditCard />
+
+                                    Proceed to Payment
+
+                                </button>
+
+
+                                <div className="secure-checkout">
+
+                                    <FaShieldAlt />
+
+                                    Safe & Secure Checkout
+
+                                </div>
 
                             </div>
 
-                        </div>
 
-                    </aside>
+                            {/* DELIVERY */}
+
+                            <div className="delivery-box">
+
+                                <FaTruck />
+
+                                <div>
+
+                                    <strong>
+                                        Free Delivery
+                                    </strong>
+
+                                    <span>
+                                        On orders above ₹500
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                        </aside>
+
+                    </div>
 
                 </div>
 
-            </div>
-
-        </main>
+            </main>
         </>
     );
 };

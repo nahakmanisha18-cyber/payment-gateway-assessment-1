@@ -176,38 +176,57 @@ export const getOrder = createAsyncThunk(
 
 // CANCEL ORDER
 
-// export const cancelOrder =
-//     createAsyncThunk(
+export const cancelOrder = createAsyncThunk(
+    "order/cancelOrder",
 
-//         "order/cancelOrder",
+    async (orderId, { rejectWithValue }) => {
 
-//         async (
-//             orderId,
-//             { rejectWithValue }
-//         ) => {
+        try {
 
-//             try {
+            const token = sessionStorage.getItem("TOKEN");
 
-//                 const response =
-//                     await axios.patch(
-//                         `/api/order/cancel/${orderId}`,
-//                         {},
-//                         {
-//                             withCredentials: true,
-//                         }
-//                     );
+            console.log("CANCEL ORDER TOKEN:", token);
 
-//                 return response.data;
+            // Login check
+            if (!token) {
 
-//             } catch (error) {
+                return rejectWithValue({
+                    success: false,
+                    message: "Please login first",
+                });
 
-//                 return rejectWithValue(
-//                     error.response?.data || {
-//                         success: false,
-//                         message:
-//                             "Failed to cancel order",
-//                     }
-//                 );
-//             }
-//         }
-//     );
+            }
+
+            const response = await axios.patch(
+                `/api/order/cancel/${orderId}`,
+                {},
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+            console.log(
+                "CANCEL ORDER RESPONSE:",
+                response.data
+            );
+
+            return response.data;
+
+        } catch (error) {
+
+            console.error(
+                "CANCEL ORDER ERROR:",
+                error.response?.data || error
+            );
+
+            return rejectWithValue(
+                error.response?.data || {
+                    success: false,
+                    message: "Failed to cancel order",
+                }
+            );
+        }
+    }
+);

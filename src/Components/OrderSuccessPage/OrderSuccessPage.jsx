@@ -80,28 +80,13 @@ const OrderSuccessPage = ({
     // =====================================
 
     if (isLoading) {
-
         return (
-            <main className="order-success-page">
-
-                <div className="order-loading">
-
-                    <div className="loading-spinner"></div>
-
-                    <h2>
-                        Loading your order...
-                    </h2>
-
-                    <p>
-                        Please wait a moment.
-                    </p>
-
-                </div>
-
-            </main>
+            <div className="orders-loading-overlay">
+                <div className="orders-loader"></div>
+                <p>Loading...</p>
+            </div>
         );
     }
-
 
     // =====================================
     // ERROR

@@ -118,6 +118,429 @@
     color: #6b7280;
 }
 
+/* =========================================
+   LOGIN REQUIRED - CART
+========================================= */
+
+.cart-login-required {
+    width: 100%;
+    max-width: 850px;
+    margin: 60px auto;
+    padding: 50px 55px;
+
+    background: #ffffff;
+    border: 1px solid #eeeeee;
+    border-radius: 20px;
+
+    text-align: center;
+
+    box-shadow:
+        0 10px 35px rgba(0, 0, 0, 0.07);
+
+    position: relative;
+    overflow: hidden;
+}
+
+
+/* Top decorative line */
+
+.cart-login-required::before {
+    content: "";
+    position: absolute;
+
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 5px;
+
+    background: linear-gradient(90deg,
+            #2874f0,
+            #5c9cff,
+            #2874f0);
+}
+
+
+/* =========================================
+   LOGIN ICON
+========================================= */
+
+.cart-login-icon {
+    width: 82px;
+    height: 82px;
+
+    margin: 0 auto 22px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #eef5ff;
+
+    font-size: 38px;
+
+    box-shadow:
+        0 8px 20px rgba(40, 116, 240, 0.12);
+}
+
+
+/* =========================================
+   LABEL
+========================================= */
+
+.cart-login-label {
+    display: block;
+
+    margin-bottom: 10px;
+
+    font-size: 12px;
+    font-weight: 700;
+
+    letter-spacing: 1.5px;
+
+    color: #2874f0;
+}
+
+
+/* =========================================
+   HEADING
+========================================= */
+
+.cart-login-required h1 {
+    margin: 0 0 12px;
+
+    font-size: 32px;
+    font-weight: 700;
+
+    color: #222;
+
+    line-height: 1.3;
+}
+
+
+/* =========================================
+   DESCRIPTION
+========================================= */
+
+.cart-login-required>p {
+    max-width: 600px;
+
+    margin: 0 auto;
+
+    font-size: 15px;
+    line-height: 1.7;
+
+    color: #777;
+}
+
+
+/* =========================================
+   BENEFITS
+========================================= */
+
+.cart-login-benefits {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 15px;
+
+    margin: 35px 0;
+}
+
+
+/* Individual benefit */
+
+.cart-login-benefits>div {
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 17px 15px;
+
+    text-align: left;
+
+    background: #f8faff;
+
+    border: 1px solid #edf2fa;
+
+    border-radius: 12px;
+
+    transition: all 0.25s ease;
+}
+
+
+/* Hover */
+
+.cart-login-benefits>div:hover {
+    transform: translateY(-3px);
+
+    border-color: #d7e5ff;
+
+    box-shadow:
+        0 6px 18px rgba(40, 116, 240, 0.08);
+}
+
+
+/* Benefit icon */
+
+.cart-login-benefits>div>span {
+    width: 42px;
+    height: 42px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+
+    background: #ffffff;
+
+    font-size: 21px;
+
+    box-shadow:
+        0 3px 10px rgba(0, 0, 0, 0.05);
+}
+
+
+/* Benefit text */
+
+.cart-login-benefits strong {
+    display: block;
+
+    margin-bottom: 4px;
+
+    font-size: 13px;
+
+    color: #333;
+}
+
+
+.cart-login-benefits small {
+    display: block;
+
+    font-size: 11px;
+
+    line-height: 1.4;
+
+    color: #888;
+}
+
+
+/* =========================================
+   BUTTON AREA
+========================================= */
+
+.cart-login-actions {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 14px;
+
+    margin-top: 5px;
+}
+
+
+/* =========================================
+   LOGIN BUTTON
+========================================= */
+
+.cart-login-btn {
+    min-width: 150px;
+
+    padding: 13px 25px;
+
+    border: none;
+    border-radius: 8px;
+
+    background: #2874f0;
+
+    color: #ffffff;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: all 0.25s ease;
+
+    box-shadow:
+        0 5px 15px rgba(40, 116, 240, 0.22);
+}
+
+
+.cart-login-btn:hover {
+    background: #1769e0;
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 8px 20px rgba(40, 116, 240, 0.28);
+}
+
+
+.cart-login-btn:active {
+    transform: translateY(0);
+}
+
+
+/* =========================================
+   CONTINUE SHOPPING
+========================================= */
+
+.cart-shopping-btn {
+    min-width: 160px;
+
+    padding: 12px 24px;
+
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid #d8d8d8;
+    border-radius: 8px;
+
+    background: #ffffff;
+
+    color: #333;
+
+    text-decoration: none;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    transition: all 0.25s ease;
+}
+
+
+.cart-shopping-btn:hover {
+    border-color: #2874f0;
+
+    color: #2874f0;
+
+    background: #f7faff;
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 768px) {
+
+    .cart-login-required {
+        max-width: calc(100% - 30px);
+
+        margin: 35px auto;
+
+        padding: 40px 25px;
+
+        border-radius: 16px;
+    }
+
+
+    .cart-login-icon {
+        width: 70px;
+        height: 70px;
+
+        font-size: 32px;
+    }
+
+
+    .cart-login-required h1 {
+        font-size: 25px;
+    }
+
+
+    .cart-login-required>p {
+        font-size: 14px;
+    }
+
+
+    .cart-login-benefits {
+        grid-template-columns: 1fr;
+
+        gap: 10px;
+
+        margin: 28px 0;
+    }
+
+
+    .cart-login-benefits>div {
+        padding: 14px;
+    }
+
+
+    .cart-login-actions {
+        flex-direction: column;
+
+        width: 100%;
+    }
+
+
+    .cart-login-btn,
+    .cart-shopping-btn {
+        width: 100%;
+
+        max-width: 300px;
+    }
+
+}
+
+
+/* =========================================
+   SMALL MOBILE
+========================================= */
+
+@media (max-width: 480px) {
+
+    .cart-login-required {
+        max-width: calc(100% - 20px);
+
+        margin: 25px auto;
+
+        padding: 35px 18px;
+    }
+
+
+    .cart-login-icon {
+        width: 64px;
+        height: 64px;
+
+        font-size: 29px;
+
+        margin-bottom: 18px;
+    }
+
+
+    .cart-login-label {
+        font-size: 10px;
+
+        letter-spacing: 1.2px;
+    }
+
+
+    .cart-login-required h1 {
+        font-size: 22px;
+    }
+
+
+    .cart-login-required>p {
+        font-size: 13px;
+
+        line-height: 1.6;
+    }
+
+}
 
 /* =========================
    MAIN LAYOUT

@@ -4,7 +4,7 @@ import {
 
 import {
     createOrder, getOrders, getOrder,
-    // cancelOrder
+    cancelOrder
 } from "../action/orderAction";
 
 
@@ -139,59 +139,59 @@ const orderSlice =
 
             // CANCEL ORDER
 
-            // builder
+            builder
 
-            //     .addCase(
-            //         cancelOrder.pending,
-            //         (state) => {
+                .addCase(
+                    cancelOrder.pending,
+                    (state) => {
 
-            //             state.isLoading = true;
+                        state.isLoading = true;
 
-            //             state.isError = false;
+                        state.isError = false;
 
-            //             state.errorMessage = "";
-            //         }
-            //     )
+                        state.errorMessage = "";
+                    }
+                )
 
-            //     .addCase(
-            //         cancelOrder.fulfilled,
-            //         (state, action) => {
+                .addCase(
+                    cancelOrder.fulfilled,
+                    (state, action) => {
 
-            //             state.isLoading = false;
+                        state.isLoading = false;
 
-            //             state.isSuccess = true;
+                        state.isSuccess = true;
 
-            //             const updatedOrder =
-            //                 action.payload.order;
+                        const updatedOrder =
+                            action.payload.order;
 
-            //             state.selectedOrder =
-            //                 updatedOrder;
+                        state.selectedOrder =
+                            updatedOrder;
 
-            //             state.orders =
-            //                 state.orders.map(
-            //                     (order) =>
-            //                         order._id ===
-            //                             updatedOrder._id
-            //                             ? updatedOrder
-            //                             : order
-            //                 );
-            //         }
-            //     )
+                        state.orders =
+                            state.orders.map(
+                                (order) =>
+                                    order._id ===
+                                        updatedOrder._id
+                                        ? updatedOrder
+                                        : order
+                            );
+                    }
+                )
 
-            //     .addCase(
-            //         cancelOrder.rejected,
-            //         (state, action) => {
+                .addCase(
+                    cancelOrder.rejected,
+                    (state, action) => {
 
-            //             state.isLoading = false;
+                        state.isLoading = false;
 
-            //             state.isError = true;
+                        state.isError = true;
 
-            //             state.errorMessage =
-            //                 action.payload
-            //                     ?.message ||
-            //                 "Failed to cancel order";
-            //         }
-            //     );
+                        state.errorMessage =
+                            action.payload
+                                ?.message ||
+                            "Failed to cancel order";
+                    }
+                );
 
         },
     });

@@ -281,35 +281,23 @@ export const clearCart = createAsyncThunk(
     "cart/clearCart",
     async (_, { rejectWithValue }) => {
         try {
-            const response = await axios.delete(
+            const token = sessionStorage.getItem("TOKEN");
+
+            const { data } = await axios.delete(
                 "/api/cart/clearCart",
                 {
-                    withCredentials: true,
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
                 }
             );
 
-            console.log(
-                "CLEAR CART RESPONSE:",
-                response.data
-            );
-
-            return response.data;
+            return data;
 
         } catch (error) {
-
-            console.error(
-                "CLEAR CART AXIOS ERROR:",
-                error
-            );
-
-            console.error(
-                "CLEAR CART RESPONSE:",
-                error.response?.data
-            );
-
             return rejectWithValue(
                 error.response?.data || {
-                    message: error.message || "Clear cart failed",
+                    message: "Clear cart failed",
                 }
             );
         }
