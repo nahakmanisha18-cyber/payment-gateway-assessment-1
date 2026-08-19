@@ -13,7 +13,7 @@ import { logout } from "@/redux/action/authAction";
 import { getCart } from "@/redux/action/cartAction";
 import { useRouter, usePathname } from "next/navigation";
 import Search from "@/Components/Search/Search";
-
+import { getWishlist } from "@/redux/action/wishlistAction";
 
 const Header = () => {
     const dispatch = useDispatch();
@@ -22,6 +22,11 @@ const Header = () => {
     const { cart } = useSelector(
         (state) => state.cartStore
     );
+
+    const { wishlist } = useSelector(
+        (state) => state.wishlistStore
+    );
+
     useEffect(() => {
         dispatch(getProfile());
     }, [dispatch]);
@@ -56,6 +61,15 @@ const Header = () => {
 
     }, [user, dispatch]);
 
+    useEffect(() => {
+        if (user?.role === "user") {
+            dispatch(getWishlist());
+        }
+    }, [user, dispatch]);
+
+    const wishlistCount =
+        wishlist?.products?.length || 0;
+        
     const handleSearch = (e) => {
         e.preventDefault();
 
@@ -141,7 +155,7 @@ const Header = () => {
                                         <Link href="/wishlist" className="header-action">
                                             <div className="action-icon">
                                                 <FaHeart />
-                                                <span className="badge-count">2</span>
+                                                <span className="badge-count">0</span>
                                             </div>
                                             <span className="action-text">Wishlist</span>
                                         </Link>
@@ -217,9 +231,17 @@ const Header = () => {
                                         <Link href="/wishlist" className="header-action">
                                             <div className="action-icon">
                                                 <FaHeart />
-                                                <span className="badge-count">2</span>
+
+                                                {wishlistCount > 0 && (
+                                                    <span className="badge-count">
+                                                        {wishlistCount}
+                                                    </span>
+                                                )}
                                             </div>
-                                            <span className="action-text">Wishlist</span>
+
+                                            <span className="action-text">
+                                                Wishlist
+                                            </span>
                                         </Link>
 
                                         <Link

@@ -6,6 +6,8 @@ import productSlice from "./slice/productSlice";
 import cartSlice from "./slice/cartSlice";
 import paymentSlice from "./slice/paymentSlice";
 import orderSlice from "./slice/orderSlice";
+import wishlistSlice from "./slice/wishlistSlice";
+
 
 
 
@@ -20,5 +22,7 @@ export const store = configureStore({
         cartStore: cartSlice,
         paymentStore: paymentSlice,
         orderStore: orderSlice,
+        wishlistStore: wishlistSlice,
+
     },
 });

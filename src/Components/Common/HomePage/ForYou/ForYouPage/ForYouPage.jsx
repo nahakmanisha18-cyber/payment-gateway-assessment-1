@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import {  Container } from "react-bootstrap";
+import { Container } from "react-bootstrap";
 
 import {
     FaArrowLeft,
@@ -18,6 +18,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getAllProducts } from "@/redux/action/productAction";
 import { addToCart } from "@/redux/action/cartAction";
 import { GiLipstick } from "react-icons/gi";
+import { addWishlist, removeWishlist } from "@/redux/action/wishlistAction";
 import "./ForYouPage.css";
 const banners = [
     {
@@ -125,17 +126,24 @@ const ForYouPage = () => {
 
     const dispatch = useDispatch();
     const [selectedCategory, setSelectedCategory] = useState("all");
-
+   
     const {
         products,
         isLoading,
         isError,
     } = useSelector((state) => state.productStore);
-    
+
 
     useEffect(() => {
         dispatch(getAllProducts());
     }, [dispatch]);
+
+    const { wishlist } = useSelector(
+        (state) => state.wishlistStore
+    );
+   
+
+
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -164,9 +172,6 @@ const ForYouPage = () => {
                 : prev + 1
         );
     };
-
-    const trendingProducts = products.slice(0, 5);
-
     const filteredProducts =
         selectedCategory === "all"
             ? products
@@ -176,45 +181,7 @@ const ForYouPage = () => {
                     selectedCategory.toLowerCase()
             );
 
-    const fashionProducts = products
-        .filter(
-            (product) =>
-                product.category?.toLowerCase() ===
-                "fashion"
-        )
-        .slice(0, 5);
-
-    const mobileProducts = products
-        .filter(
-            (product) =>
-                product.category?.toLowerCase() ===
-                "mobiles"
-        )
-        .slice(0, 5);
-
-    const beautyProducts = products
-        .filter(
-            (product) =>
-                product.category?.toLowerCase() ===
-                "beauty"
-        )
-        .slice(0, 5);
-
-    const electronicsProducts = products
-        .filter(
-            (product) =>
-                product.category?.toLowerCase() ===
-                "electronics"
-        )
-        .slice(0, 5);
-
-    const homeProducts = products
-        .filter(
-            (product) =>
-                product.category?.toLowerCase() ===
-                "home"
-        )
-        .slice(0, 5);
+    
 
     /* ===============================
        PRODUCT CARD
@@ -229,6 +196,13 @@ const ForYouPage = () => {
         } = useSelector(
             (state) => state.cartStore
         );
+
+        const isWishlisted =
+            wishlist?.products?.some(
+                (item) =>
+                    String(item?._id || item) ===
+                    String(product._id)
+            ) || false;
 
 
         const handleAddToCart = () => {
@@ -246,7 +220,21 @@ const ForYouPage = () => {
         return (
             <div className="foryou-product-card">
 
-                <button className="foryou-wishlist-btn">
+                <button
+                    type="button"
+                    className={`foryou-wishlist-btn ${isWishlisted ? "active" : ""
+                        }`}
+                    onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        if (isWishlisted) {
+                            dispatch(removeWishlist(product._id));
+                        } else {
+                            dispatch(addWishlist(product._id));
+                        }
+                    }}
+                >
                     <FaHeart />
                 </button>
 
@@ -262,7 +250,7 @@ const ForYouPage = () => {
                         alt={product.productName}
                     />
                 </Link>
-               
+
 
                 <div className="foryou-product-content">
 
@@ -378,44 +366,44 @@ const ForYouPage = () => {
 
     return (
         <>
-        
-        <section className="foryou-category-section">
-            <Container>
-                <div className="foryou-category-items">
 
-                    {categories.map((category) => {
+            <section className="foryou-category-section">
+                <Container>
+                    <div className="foryou-category-items">
 
-                        const isActive =
-                            selectedCategory === category.value;
+                        {categories.map((category) => {
 
-                        return (
-                            <button
-                                key={category.value}
-                                type="button"
-                                className={`foryou-category-link ${isActive ? "active" : ""
-                                    }`}
-                                onClick={() =>
-                                    setSelectedCategory(category.value)
-                                }
-                            >
+                            const isActive =
+                                selectedCategory === category.value;
 
-                                <div className="foryou-category-icon">
-                                    {category.icon}
-                                </div>
+                            return (
+                                <button
+                                    key={category.value}
+                                    type="button"
+                                    className={`foryou-category-link ${isActive ? "active" : ""
+                                        }`}
+                                    onClick={() =>
+                                        setSelectedCategory(category.value)
+                                    }
+                                >
 
-                                <span>
-                                    {category.name}
-                                </span>
+                                    <div className="foryou-category-icon">
+                                        {category.icon}
+                                    </div>
 
-                            </button>
-                        );
+                                    <span>
+                                        {category.name}
+                                    </span>
 
-                    })}
+                                </button>
+                            );
 
-                </div>
+                        })}
+
+                    </div>
                 </Container>
             </section>
-            
+
             <main className="foryou-page">
 
                 {isLoading && (
@@ -506,7 +494,7 @@ const ForYouPage = () => {
                     </div>
 
                 </section>
-                
+
                 <ProductSection
                     title={
                         selectedCategory === "all"
@@ -520,9 +508,9 @@ const ForYouPage = () => {
                     link="/products"
                 />
             </main>
-            
-            </>
-        
+
+        </>
+
     );
 };
 

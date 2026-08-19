@@ -9,7 +9,7 @@
     width: 100%;
     height: 100vh;
 
-    /* Background blur + transparent dark layer */
+    
     background: rgba(255, 255, 255, 0.45);
 
     backdrop-filter: blur(8px) !important;
@@ -778,16 +778,9 @@
 
     border: 1px solid #e8e8e8;
 
-    transition:
-        transform 0.25s ease,
-        box-shadow 0.25s ease;
+   
 }
 
-.foryou-product-card:hover {
-    transform: translateY(-4px);
-
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.10);
-}
 
 
 /* =========================================
@@ -812,13 +805,8 @@
     object-fit: contain;
 
     padding: 10px;
-
-    transition: transform 0.3s ease;
 }
 
-.foryou-product-card:hover .foryou-product-image img {
-    transform: scale(1.05);
-}
 
 
 /* =========================================
@@ -858,16 +846,9 @@
     transition: 0.2s ease;
 }
 
-.foryou-wishlist-btn:hover {
-    color: #ff3b5c;
-
-    transform: scale(1.08);
-}
-
 .foryou-wishlist-btn.active {
     color: #ff3b5c;
 }
-
 
 /* =========================================
    PRODUCT CONTENT
