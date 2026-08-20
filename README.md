@@ -1,420 +1,367 @@
-# 🛒 E-Commerce Application
+# 🛍️ Full Stack E-Commerce Application
 
-A e-commerce web application built with **Next.js App Router**, featuring user authentication, product browsing, cart management, and secure checkout powered by **Razorpay**.
+A modern, full-stack **E-Commerce web application** built with **Next.js 16** and **React 19**, featuring product browsing, cart & wishlist management, order placement, JWT-based authentication, image uploads via Cloudinary, and an admin section for application management.
 
-![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js&logoColor=white)
-![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white)
-![MongoDB](https://img.shields.io/badge/MongoDB-Database-47A248?logo=mongodb&logoColor=white)
-![Redux Toolkit](https://img.shields.io/badge/Redux%20Toolkit-State%20Management-764ABC?logo=redux&logoColor=white)
-![Razorpay](https://img.shields.io/badge/Razorpay-Payments-0C2451?logo=razorpay&logoColor=white)
-![Cloudinary](https://img.shields.io/badge/Cloudinary-Image%20Upload-3448C5?logo=cloudinary&logoColor=white)
-![License](https://img.shields.io/badge/License-Not%20Specified-lightgrey)
+> 📁 This is a **portfolio/project application** built to demonstrate full-stack development skills using the modern React/Next.js ecosystem.
 
 ---
 
-## 🎬 Demo / Preview
+## 🏷️ Badges
 
-> _Add a live demo link or preview GIF/video here once deployed._
-
-```
-🔗 Live Demo: 
-```
-
-### 📽️ Project Presentation Video
-
-> _Add a link to your project walkthrough / presentation video here (e.g., YouTube, Loom, Google Drive)._
-
-```
-🎥 Presentation Video: 
-```
+![Next.js](https://img.shields.io/badge/Next.js-16-black?style=for-the-badge&logo=next.js)
+![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=black)
+![Node.js](https://img.shields.io/badge/Node.js-Backend-339933?style=for-the-badge&logo=node.js&logoColor=white)
+![MongoDB](https://img.shields.io/badge/MongoDB-Database-47A248?style=for-the-badge&logo=mongodb&logoColor=white)
+![Redux](https://img.shields.io/badge/Redux%20Toolkit-State%20Management-764ABC?style=for-the-badge&logo=redux&logoColor=white)
+![JWT](https://img.shields.io/badge/JWT-Authentication-000000?style=for-the-badge&logo=jsonwebtokens&logoColor=white)
+![Cloudinary](https://img.shields.io/badge/Cloudinary-Image%20Upload-3448C5?style=for-the-badge&logo=cloudinary&logoColor=white)
+![Bootstrap](https://img.shields.io/badge/Bootstrap-UI-7952B3?style=for-the-badge&logo=bootstrap&logoColor=white)
 
 ---
 
-## ✨ Features
+## 📖 Project Overview
 
-- 🔐 User registration and login with JWT-based authentication
-- 🔒 Secure password hashing using bcryptjs
-- 🛍️ Product listing and detailed product pages
-- 🛒 Add to cart, update quantity, remove items, and clear cart
-- 📦 Checkout page with delivery address form
-- 💰 Order price, discount, and delivery charge calculation
-- 💳 Razorpay payment integration (order creation & verification)
-- ✅ Automatic cart clearing after successful payment
-- 🔁 Order success / navigation flow after payment
-- ☁️ Product image upload and hosting via Cloudinary
-- 📱 Responsive user interface built with Bootstrap & React Bootstrap
-- ⏳ Loading states and error handling across the app
-- 🛡️ Protected API operations for authenticated users
-- 🗄️ MongoDB integration via Mongoose for data persistence
-- 🌐 REST-style API routes using Next.js Route Handlers
+This project is a **full-stack e-commerce application** that allows users to browse products, view detailed product information, search for items, manage a shopping cart and wishlist, place orders, and make payments. Users can also manage their profiles and view their order history.
+
+The application includes secure **JWT-based authentication**, **protected API routes**, **image uploading via Cloudinary**, structured **order management**, and an **admin section** for managing the platform.
 
 ---
 
-## 🧰 Tech Stack
+## 🚀 Technology Stack
 
-| Category | Technology |
-|---|---|
-| Framework | Next.js 16 (App Router) |
-| UI Library | React 19 |
-| Styling | Bootstrap, React Bootstrap, CSS |
-| Icons | Bootstrap Icons, React Icons |
-| State Management | Redux Toolkit, React Redux |
-| HTTP Client | Axios |
-| Database | MongoDB |
-| ODM | Mongoose |
-| Authentication | JWT (jsonwebtoken), bcryptjs |
-| Payments | Razorpay |
-| Image Upload/Hosting | Cloudinary |
-| Runtime | Node.js |
+### Frontend
+- Next.js 16
+- React 19
+- JavaScript
+- Bootstrap
+- React Bootstrap
+- Bootstrap Icons
+- React Icons
+- CSS
 
-### Key Dependencies (from `package.json`)
+### State Management
+- Redux Toolkit
+- React Redux
 
-```
-@reduxjs/toolkit
-axios
-bcryptjs
-bootstrap
-bootstrap-icons
-cloudinary
-jsonwebtoken
-mongoose
-next
-razorpay
-react
-react-bootstrap
-react-dom
-react-icons
-react-redux
-```
+### Backend
+- Next.js API Routes
+- REST APIs
+- Node.js environment
+
+### Database
+- MongoDB
+- Mongoose
+
+### Authentication & Security
+- JWT (JSON Web Token)
+- bcryptjs for password hashing
+- Protected API routes using token verification
+
+### Image Upload
+- **Cloudinary** — used to upload and manage product images
+
+### Payment Integration
+The project includes payment-related functionality and integrations using:
+- Razorpay
+- Stripe
+- PayPal
+
+> ⚠️ These are included as **payment integrations available in the project**. Not every gateway is guaranteed to be fully functional in all environments — please verify configuration before relying on any specific gateway in production.
 
 ---
 
-## 🔄 Application Flow
+## ✨ Main Features
 
-1. User visits the site and browses products.
-2. User signs up or logs in (JWT-based authentication).
-3. User views product details and adds items to the cart.
-4. Cart state is managed via Redux Toolkit.
-5. User proceeds to checkout and fills in a delivery address.
-6. Payment is processed through Razorpay.
-7. On successful payment verification, the cart is cleared.
-8. User is redirected to the appropriate success/cart page.
+### 👤 User Features
+- User Registration
+- User Login and Logout
+- JWT Authentication
+- Password Hashing
+- Protected User Routes
+- User Profile
+- Edit Profile
+- Browse Products
+- View Product Details
+- Search Products
+- Add Products to Cart
+- Update Cart Quantity
+- Remove Products from Cart
+- Wishlist Management
+- Buy Now functionality
+- Checkout Process
+- Place Orders
+- Order Success Page
+- View Order History
+
+### 📦 Product Features
+- Product Listing
+- Product Details Page
+- Product Search
+- Product Filtering
+- Product Image Upload
+- Cloudinary Image Management
+
+### 🛒 Cart Features
+- Add to Cart
+- Update Product Quantity
+- Remove Items from Cart
+- Cart Data Management
+- Redux State Management
+
+### 💖 Wishlist Features
+- Add Products to Wishlist
+- Remove Products from Wishlist
+- Manage Wishlist Items
+
+### 📋 Order Features
+- Create Orders
+- Fetch User Orders
+- Fetch Individual Order Details
+- Order Success Page
+- Order History
+
+### 💳 Payment Features
+- Payment integration architecture
+- Razorpay integration
+- Stripe integration
+- PayPal integration
+
+### 🛠️ Admin Features
+- Admin section
+- Admin APIs
+- Product management architecture
+- User management architecture
+- Order management capabilities
+
+> Admin functionality reflects the architecture currently present in the project structure and is not exaggerated beyond what is implemented.
 
 ---
 
 ## 🔐 Authentication Flow
 
-Authentication is handled using **JWT (JSON Web Token)** combined with **bcryptjs** for password security.
-
-- **Registration:** When a user signs up, their password is hashed using `bcryptjs` before being stored in MongoDB. Plain-text passwords are never saved.
-- **Login:** On login, the submitted password is compared against the hashed password using `bcryptjs`. If valid, a JWT is generated using `jsonwebtoken`.
-- **Session Handling:** The JWT is used to identify the user on subsequent requests to protected API routes.
-- **Protected Routes:** Backend API routes verify the JWT before allowing access to sensitive operations (e.g., cart updates, payment actions).
-
-> ℹ️ This project does **not** implement OAuth, Google/Facebook login, or server-side sessions. Authentication is strictly JWT + bcryptjs based.
+1. User registers an account.
+2. Password is securely hashed using **bcryptjs**.
+3. User logs into the application.
+4. A **JWT token** is generated upon successful login.
+5. The token is used to authenticate protected API requests.
+6. Token verification logic validates authenticated users via a reusable **`verifyToken.js`** utility.
 
 ---
 
-## 🛒 Shopping Cart Flow
+## 🗄️ Database Models
 
+| Model | Description |
+|-------|-------------|
+| **User** | Stores user account details, credentials, and profile information |
+| **Product** | Stores product details such as name, price, description, and images |
+| **Cart** | Manages items added to a user's shopping cart |
+| **Wishlist** | Manages products saved by a user for later |
+| **Order** | Stores order details, including items, status, and payment information |
+
+---
+
+## 🔗 API Structure
+
+The application uses **Next.js API Routes** to handle backend functionality, structured as follows:
+
+```text
+/api
+├── admin
+├── auth
+├── cart
+├── order
+├── payment
+├── product
+├── user
+└── wishlist
 ```
-User selects a product
-   → Adds product to cart
-   → Views cart
-   → Updates quantity if needed
-   → Removes product(s) if needed
-   → Proceeds to checkout
-```
 
-Cart state (items, quantities) is managed globally using **Redux Toolkit** and **React Redux**, allowing consistent cart behavior across the app.
+Each directory contains route handlers responsible for its respective domain (e.g., `auth` handles login/registration, `product` handles product CRUD operations, etc.).
 
 ---
 
-## 💳 Checkout & Razorpay Payment Flow
+## 📂 Project Structure
 
-The project integrates **Razorpay** as its sole payment gateway. The payment flow works as follows:
-
-1. User enters delivery/checkout details.
-2. The frontend sends a request to the backend to create a payment order.
-3. The backend creates a corresponding **Razorpay order**.
-4. The Razorpay checkout modal opens on the frontend.
-5. The user completes the payment through Razorpay's UI.
-6. Razorpay returns payment details (order ID, payment ID, signature) to the frontend.
-7. The backend verifies the payment signature/details to confirm authenticity.
-8. On successful verification, the **cart is cleared**.
-9. The user is redirected to the success flow (e.g., order confirmation or cart page).
-
-> ⚠️ Only **Razorpay** is implemented in this project. No other payment gateways (e.g., Stripe, PayPal) are currently supported.
-
----
-
-## 🖼️ Image Upload Flow (Cloudinary)
-
-Product images are uploaded and hosted using **Cloudinary**, keeping media storage separate from the main database.
-
-1. An image is selected (e.g., during product creation/admin operations).
-2. The image is uploaded to **Cloudinary** via the backend upload service.
-3. Cloudinary returns a hosted image URL.
-4. The returned URL is stored in MongoDB alongside the related product data via Mongoose.
-5. The frontend renders product images directly from Cloudinary's hosted URLs.
-
----
-
-## 🏗️ Project Architecture
-
-- **Frontend & Backend** are unified within a single Next.js application using the **App Router**.
-- **API Route Handlers** (inside `src/app/api`) serve as the backend, handling authentication, product, cart, and payment logic.
-- **MongoDB** stores application data (users, products, carts), accessed through **Mongoose** models.
-- **Cloudinary** handles image uploads and hosting, with resulting URLs stored in MongoDB.
-- **Redux Toolkit** manages global client-side state, particularly for authentication and cart data.
-- **Axios** is used on the frontend to communicate with the API route handlers.
-- **Bootstrap / React Bootstrap** provide the responsive UI layer.
-
----
-
-## 📁 Folder Structure
-
-> The structure below is a **representative example** based on a typical Next.js App Router project layout. Exact file contents may vary.
-
-```
-full-stack-app/
-├── .next/
-├── node_modules/
-├── public/
-├── src/
-│   ├── app/
+```text
+src/
+├── app/
+│   ├── admin/
+│   ├── api/
 │   │   ├── admin/
-│   │   ├── api/
-│   │   │   ├── admin/
-│   │   │   ├── auth/
-│   │   │   ├── cart/
-│   │   │   ├── payment/
-│   │   │   ├── product/
-│   │   │   └── user/
+│   │   ├── auth/
 │   │   ├── cart/
-│   │   ├── categories/
-│   │   ├── checkout/
-│   │   ├── details/[id]/
-│   │   ├── profile/
-│   │   ├── profile-edit/
-│   │   ├── globals.css
-│   │   ├── layout.js
-│   │   ├── LayoutClient.jsx
-│   │   ├── page.js
-│   │   ├── page.module.css
-│   │   └── StoreProvider.js
-│   ├── Components/
-│   │   ├── AddToCart/
-│   │   ├── CheckoutPage/
-│   │   ├── Common/
-│   │   │   ├── AdminPenal/
-│   │   │   │   ├── AdminHeader/
-│   │   │   │   ├── AdminProfile/
-│   │   │   │   ├── AdminSidebar/
-│   │   │   │   ├── Dashboard/
-│   │   │   │   ├── OdersBtn/
-│   │   │   │   ├── PaymentBtn/
-│   │   │   │   └── ProductBtn/
-│   │   │   ├── Categories/
-│   │   │   │   ├── ForYou/
-│   │   │   │   ├── Fshion/
-│   │   │   │   └── Mobiles/
-│   │   │   └── Header/
-│   │   │       ├── Header.css
-│   │   │       └── Header.jsx
-│   │   ├── LogIn/
-│   │   ├── ProductDetails/
-│   │   ├── ProfileEditForm/
-│   │   ├── ProfilePage/
-│   │   └── SignUp/
-│   ├── lib/
-│   │   ├── model/
-│   │   │   ├── cart.js
-│   │   │   ├── product.js
-│   │   │   └── user.js
-│   │   ├── dbConnect.js
-│   │   └── verifyToken.js
-│   ├── redux/
-│   │   ├── action/
-│   │   │   ├── adminAction.js
-│   │   │   ├── authAction.js
-│   │   │   ├── cartAction.js
-│   │   │   ├── paymentAction.js
-│   │   │   ├── productAction.js
-│   │   │   └── userAction.js
-│   │   ├── slice/
-│   │   │   ├── adminSlice.js
-│   │   │   ├── authSlice.js
-│   │   │   ├── cartSlice.js
-│   │   │   ├── paymentSlice.js
-│   │   │   ├── productSlice.js
-│   │   │   └── userSlice.js
-│   │   └── store.js
-│   ├── services/
-│   │   └── product/
-│   │       ├── productImageUpload.js
-│   │       └── imageUpload.js
-│   └── utils/
-│       └── validate.js
-├── .env
-├── .gitignore
-├── eslint.config.mjs
-├── jsconfig.json
-├── next.config.mjs
-├── package-lock.json
-├── package.json
-└── README.md
+│   │   ├── order/
+│   │   ├── payment/
+│   │   ├── product/
+│   │   ├── user/
+│   │   └── wishlist/
+│   ├── cart/
+│   ├── checkout/
+│   ├── details/
+│   ├── orders/
+│   ├── profile/
+│   ├── wishlist/
+│   └── page.js
+│
+├── Components/
+│   ├── AddToCart/
+│   ├── CheckoutPage/
+│   ├── Common/
+│   ├── LogIn/
+│   ├── OrdersPage/
+│   ├── ProductDetails/
+│   ├── ProfilePage/
+│   ├── Search/
+│   ├── SignUp/
+│   └── WishlistPage/
+│
+├── lib/
+│   ├── model/
+│   │   ├── cart.js
+│   │   ├── order.js
+│   │   ├── product.js
+│   │   ├── user.js
+│   │   └── wishlist.js
+│   ├── dbConnect.js
+│   └── verifyToken.js
+│
+├── redux/
+│   ├── action/
+│   ├── slice/
+│   └── store.js
+│
+├── services/
+│   └── product/
+│       ├── productImageUpload.js
+│       └── imageUpload.js
+│
+└── utils/
+    └── validate.js
 ```
 
 ---
 
-## 🔌 API Overview
+## ⚙️ Installation Guide
 
-The backend is built using **Next.js API Route Handlers** located under `src/app/api`. Below are the general categories of APIs used in the project:
-
-| Category | Description |
-|---|---|
-| **Authentication APIs** | Handle user registration, login, and JWT-based session validation |
-| **Product APIs** | Handle fetching product listings and product details |
-| **Cart APIs** | Handle adding, updating, removing, and clearing cart items |
-| **Payment APIs** | Handle Razorpay order creation and payment verification |
-| **Image Upload APIs** | Handle uploading product images to Cloudinary |
-
-> 📝 Exact API endpoint paths depend on the internal route structure (`src/app/api/*`) and are not explicitly listed here unless confirmed. Refer to the `api` folder for the actual implementation.
-
----
-
-## 🔑 Environment Variables
-
-Create a `.env.local` file in the root directory and add the following variables:
-
-```env
-MONGODB_URI=
-JWT_SECRET=
-NEXT_PUBLIC_RAZORPAY_KEY_ID=
-RAZORPAY_KEY_SECRET=
-CLOUDINARY_CLOUD_NAME=
-CLOUDINARY_API_KEY=
-CLOUDINARY_API_SECRET=
-```
-
-| Variable | Description |
-|---|---|
-| `MONGODB_URI` | Connection string for your MongoDB database |
-| `JWT_SECRET` | Secret key used to sign and verify JWTs |
-| `NEXT_PUBLIC_RAZORPAY_KEY_ID` | Public Razorpay Key ID used on the frontend |
-| `RAZORPAY_KEY_SECRET` | Private Razorpay secret key used only on the backend |
-| `CLOUDINARY_CLOUD_NAME` | Your Cloudinary cloud name |
-| `CLOUDINARY_API_KEY` | Cloudinary API key used for uploading images |
-| `CLOUDINARY_API_SECRET` | Cloudinary API secret used only on the backend |
-
-> ⚠️ **Never commit your `.env.local` file to GitHub.** Add it to `.gitignore` and keep all secrets private.
-
----
-
-## ⚙️ Installation
-
-Clone the repository and install dependencies:
+### 1. Clone the Repository
 
 ```bash
 git clone <repository-url>
+```
+
+### 2. Navigate to the Project Directory
+
+```bash
 cd full-stack-app
+```
+
+### 3. Install Dependencies
+
+```bash
 npm install
 ```
 
----
+### 4. Configure Environment Variables
 
-## ▶️ Running the Project
+Create a `.env` file in the root directory and add the required environment variables. The values below are **placeholders only** — use the variable names actually configured in your project, and never commit real secrets.
 
-Start the development server:
+```env
+MONGODB_URI=your_mongodb_connection_string
+JWT_SECRET=your_jwt_secret
+
+CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
+CLOUDINARY_API_KEY=your_cloudinary_api_key
+CLOUDINARY_API_SECRET=your_cloudinary_api_secret
+
+NEXT_PUBLIC_RAZORPAY_KEY_ID=your_razorpay_key
+
+STRIPE_SECRET_KEY=your_stripe_secret_key
+
+NEXT_PUBLIC_PAYPAL_CLIENT_ID=your_paypal_client_id
+```
+
+> 🔒 Never commit your `.env` file or expose real API keys/secrets in version control.
+
+### 5. Run the Development Server
 
 ```bash
 npm run dev
 ```
 
-The app will be available at:
+The application will be available at:
 
-```
+```text
 http://localhost:3000
 ```
 
 ---
 
-## 🏗️ Build for Production
+## 📜 Available Scripts
 
-Build the application:
-
-```bash
-npm run build
-```
-
-Start the production server:
-
-```bash
-npm start
-```
-
----
-
-## 🛡️ Security Notes
-
-- 🚫 Never expose your **Razorpay secret key** (`RAZORPAY_KEY_SECRET`) on the frontend.
-- 🚫 Never expose your **JWT secret** (`JWT_SECRET`) anywhere in client-side code.
-- 🚫 Never expose your **Cloudinary API secret** (`CLOUDINARY_API_SECRET`) on the frontend.
-- 🚫 Never commit `.env.local` or any file containing secrets to version control.
-- ✅ Always validate Razorpay payment verification on the **server side**.
-- ✅ Always validate authenticated API requests on the **server side** using JWT verification middleware.
-- ✅ Perform image uploads to Cloudinary through the backend, not directly from unauthenticated client code.
-
----
-
-## 📌 Important Notes
-
-- This project uses **JavaScript/JSX**, not TypeScript.
-- Only **Razorpay** is integrated for payments — no Stripe, PayPal, or other gateways.
-- Authentication is strictly **JWT + bcryptjs** based; there is no OAuth or social login.
-- Image uploads are handled via **Cloudinary**; image URLs are stored in MongoDB.
-- The folder structure shown above is representative and may not reflect every file in the actual codebase.
-
----
-
-## 🚀 Future Improvements
-
-The following features are **not yet implemented** and are listed only as potential future enhancements:
-
-- 📜 Order history for users
-- 🧑‍💼 Admin dashboard
-- ⭐ Product reviews and ratings
-- ❤️ Wishlist functionality
-- 🔍 Search and advanced filtering
-- 🎟️ Coupon/discount code system
-- 📦 Improved order tracking
-- 💳 Additional payment providers in the future
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Runs the app in development mode with hot reloading |
+| `npm run build` | Builds the application for production |
+| `npm run start` | Starts the production build |
+| `npm run lint` | Runs the linter to check code quality |
 
 ---
 
 ## 🖼️ Screenshots
 
-> _Add screenshots of your application here to showcase the UI._
+> Add your application screenshots below by replacing the placeholder image paths.
 
-```
-[Home Page Screenshot]
-[Product Details Screenshot]
-[Cart Page Screenshot]
-[Checkout Page Screenshot]
-```
-
----
-
-## 👤 Author
-
-**Manisha**
-Feel free to connect or reach out for feedback and suggestions!
-
-- LinkedIn: [https://www.linkedin.com/in/manisha-nahak-8809883a2](https://www.linkedin.com/in/manisha-nahak-8809883a2)
-- GitHub: [https://github.com/nahakmanisha18-cyber](https://github.com/nahakmanisha18-cyber)
-- Portfolio: [https://portfolio-app-6eb135.netlify.app/](https://portfolio-app-6eb135.netlify.app/)
+| Page | Preview |
+|------|---------|
+| Home Page | `![Home Page](./screenshots/home.png)` |
+| Product Details | `![Product Details](./screenshots/product-details.png)` |
+| Cart | `![Cart](./screenshots/cart.png)` |
+| Wishlist | `![Wishlist](./screenshots/wishlist.png)` |
+| Login / Signup | `![Login Signup](./screenshots/auth.png)` |
+| Checkout | `![Checkout](./screenshots/checkout.png)` |
+| Payment | `![Payment](./screenshots/payment.png)` |
+| Orders | `![Orders](./screenshots/orders.png)` |
+| Profile | `![Profile](./screenshots/profile.png)` |
+| Admin Panel | `![Admin Panel](./screenshots/admin.png)` |
 
 ---
 
-⭐ If you found this project helpful, consider giving it a star on GitHub!
+## 🌟 Key Highlights
+
+- 🏗️ **Full Stack Application** — Frontend, backend, and database working together
+- ⚡ **Next.js App Router** — Modern routing and server-side capabilities
+- 🔗 **REST API Architecture** — Clean, organized API endpoints
+- 🍃 **MongoDB Database** — Flexible, scalable NoSQL data storage
+- 🔐 **JWT Authentication** — Secure, token-based user authentication
+- 🧩 **Redux Toolkit State Management** — Predictable and centralized app state
+- ☁️ **Cloudinary Image Upload** — Efficient product image management
+- 🛒 **Shopping Cart** — Full cart management functionality
+- 💖 **Wishlist** — Save products for later
+- 📦 **Order Management** — Complete order lifecycle handling
+- 💳 **Multiple Payment Gateway Integration** — Razorpay, Stripe, and PayPal
+- 🔍 **Search & Filtering** — Quickly find products with search and filter options
+
+---
+
+## 🔮 Future Improvements
+
+- [ ] Improve Admin Dashboard
+- [ ] Product Categories and Filters
+- [ ] Product Reviews and Ratings
+- [ ] Payment Status Tracking
+- [ ] Email Notifications
+- [ ] Inventory Management
+- [ ] Order Tracking
+- [ ] Responsive UI Improvements
+- [ ] Deployment using Vercel
+- [ ] CI/CD Integration
+
+---
+
+## 📄 License
+
+This project is open for learning and portfolio purposes. Feel free to explore the code and structure.
+
+---
+
+<p align="center">Built with ❤️ using Next.js, React, and MongoDB</p>
