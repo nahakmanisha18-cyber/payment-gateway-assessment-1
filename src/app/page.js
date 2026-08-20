@@ -1,6 +1,6 @@
 "use client";
 
-import ForYouPage from "@/Components/Common/HomePage/ForYou/ForYouPage/ForYouPage";
+import HomePage from "@/Components/Common/HomePage/HomePage";
 
 // import { useEffect } from "react";
 // import { useRouter } from "next/navigation";
@@ -24,7 +24,7 @@ export default function Home() {
 
   return (
     <>
-      <ForYouPage/>
+      <HomePage/>
     </>
   );
 }

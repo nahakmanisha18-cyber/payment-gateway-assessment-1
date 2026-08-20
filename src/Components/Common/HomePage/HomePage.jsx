@@ -25,7 +25,7 @@ import {
 
 
 import { GiLipstick } from "react-icons/gi";
-import "./ForYouPage.css";
+import "./HomePage.css";
 const banners = [
     {
         id: 1,
@@ -127,7 +127,7 @@ const categories = [
 ];
 
 
-const ForYouPage = () => {
+const HomePage = () => {
     const [currentBanner, setCurrentBanner] = useState(0);
 
     const dispatch = useDispatch();
@@ -554,4 +554,4 @@ const ForYouPage = () => {
     );
 };
 
-export default ForYouPage;
+export default HomePage;
