@@ -1,6 +1,6 @@
-# 🛍️ Full Stack E-Commerce Application
+# Payment Gateway Assessment
 
-A modern, full-stack **E-Commerce web application** built with **Next.js 16** and **React 19**, featuring product browsing, cart & wishlist management, order placement, JWT-based authentication, image uploads via Cloudinary, and an admin section for application management.
+A modern, Payment Gateway Assessment built with **Next.js 16** and **React 19**, featuring product browsing, cart & wishlist management, order placement, JWT-based authentication, image uploads via Cloudinary, and an admin section for application management.
 
 > 📁 This is a **portfolio/project application** built to demonstrate full-stack development skills using the modern React/Next.js ecosystem.
 
