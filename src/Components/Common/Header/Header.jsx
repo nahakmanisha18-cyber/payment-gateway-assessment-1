@@ -26,7 +26,6 @@ const Header = () => {
     const { wishlist } = useSelector(
         (state) => state.wishlistStore
     );
-
     useEffect(() => {
         dispatch(getProfile());
     }, [dispatch]);
@@ -62,14 +61,13 @@ const Header = () => {
     }, [user, dispatch]);
 
     useEffect(() => {
+
         if (user?.role === "user") {
             dispatch(getWishlist());
         }
-    }, [user, dispatch]);
 
-    const wishlistCount =
-        wishlist?.products?.length || 0;
-        
+    }, [user, dispatch]);
+    
     const handleSearch = (e) => {
         e.preventDefault();
 
@@ -88,6 +86,9 @@ const Header = () => {
                 total + Number(item.quantity || 0),
             0
         ) || 0;
+
+    const wishlistCount = wishlist?.products?.length || 0;
+
 
     return (
         <>
@@ -152,26 +153,17 @@ const Header = () => {
                                 <>
                                     <div className="header-actions">
 
-                                        <Link href="/wishlist" className="header-action">
+                                        <Link href="/wishlist" className={`header-action ${pathname === "/wishlist" ? "active" : ""}`}>
                                             <div className="action-icon">
                                                 <FaHeart />
-                                                <span className="badge-count">0</span>
+                                                <span className="badge-count">2</span>
                                             </div>
                                             <span className="action-text">Wishlist</span>
                                         </Link>
 
-                                        <Link
-                                            href="/cart"
-                                            className="header-action"
-                                        >
+                                        <Link href="/cart" className={`header-action ${pathname === "/cart" ? "active" : ""}`}>
                                             <div className="action-icon">
-
                                                 <FaShoppingCart />
-
-                                                <span className="badge-count">
-                                                    0
-                                                </span>
-
                                             </div>
 
                                             <span className="action-text">
@@ -228,8 +220,12 @@ const Header = () => {
                                 <>
                                     <div className="header-actions">
 
-                                        <Link href="/wishlist" className="header-action">
+                                        <Link
+                                            href="/wishlist"
+                                            className={`header-action ${pathname === "/wishlist" ? "active" : "" }`}
+                                        >
                                             <div className="action-icon">
+
                                                 <FaHeart />
 
                                                 {wishlistCount > 0 && (
@@ -237,6 +233,7 @@ const Header = () => {
                                                         {wishlistCount}
                                                     </span>
                                                 )}
+
                                             </div>
 
                                             <span className="action-text">
@@ -246,7 +243,7 @@ const Header = () => {
 
                                         <Link
                                             href="/cart"
-                                            className="header-action"
+                                            className={`header-action ${pathname === "/cart" ? "active" : ""}`}
                                         >
                                             <div className="action-icon">
 

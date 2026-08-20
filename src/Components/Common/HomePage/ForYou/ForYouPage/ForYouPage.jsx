@@ -17,8 +17,14 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { getAllProducts } from "@/redux/action/productAction";
 import { addToCart } from "@/redux/action/cartAction";
+import {
+    getWishlist,
+    addWishlist,
+    removeWishlist
+} from "@/redux/action/wishlistAction";
+
+
 import { GiLipstick } from "react-icons/gi";
-import { addWishlist, removeWishlist } from "@/redux/action/wishlistAction";
 import "./ForYouPage.css";
 const banners = [
     {
@@ -126,7 +132,7 @@ const ForYouPage = () => {
 
     const dispatch = useDispatch();
     const [selectedCategory, setSelectedCategory] = useState("all");
-   
+
     const {
         products,
         isLoading,
@@ -138,12 +144,9 @@ const ForYouPage = () => {
         dispatch(getAllProducts());
     }, [dispatch]);
 
-    const { wishlist } = useSelector(
-        (state) => state.wishlistStore
-    );
-   
-
-
+    useEffect(() => {
+        dispatch(getWishlist());
+    }, [dispatch]);
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -172,6 +175,8 @@ const ForYouPage = () => {
                 : prev + 1
         );
     };
+
+    
     const filteredProducts =
         selectedCategory === "all"
             ? products
@@ -183,10 +188,6 @@ const ForYouPage = () => {
 
     
 
-    /* ===============================
-       PRODUCT CARD
-    =============================== */
-
     const ProductCard = ({ product }) => {
 
         const dispatch = useDispatch();
@@ -197,12 +198,48 @@ const ForYouPage = () => {
             (state) => state.cartStore
         );
 
+        const {
+            wishlist,
+            isLoading: wishlistLoading,
+        } = useSelector(
+            (state) => state.wishlistStore
+        );
+
         const isWishlisted =
             wishlist?.products?.some(
                 (item) =>
                     String(item?._id || item) ===
                     String(product._id)
             ) || false;
+
+        const handleWishlist = () => {
+
+            console.log(
+                "WISHLIST PRODUCT ID:",
+                product._id
+            );
+
+            if (isWishlisted) {
+
+                // ==============================
+                // REMOVE WISHLIST
+                // ==============================
+
+                dispatch(
+                    removeWishlist(product._id)
+                );
+
+            } else {
+
+                // ==============================
+                // ADD WISHLIST
+                // ==============================
+
+                dispatch(
+                    addWishlist(product._id)
+                );
+            }
+            };
 
 
         const handleAddToCart = () => {
@@ -228,12 +265,9 @@ const ForYouPage = () => {
                         e.preventDefault();
                         e.stopPropagation();
 
-                        if (isWishlisted) {
-                            dispatch(removeWishlist(product._id));
-                        } else {
-                            dispatch(addWishlist(product._id));
-                        }
+                        handleWishlist();
                     }}
+                    disabled={wishlistLoading}
                 >
                     <FaHeart />
                 </button>
@@ -304,6 +338,12 @@ const ForYouPage = () => {
                         <FaShoppingCart />
                         Add to Cart
                     </button>
+
+                    {product.discountPrice > 0 && (
+                        <span className="wishlist-discount">
+                            SALE
+                        </span>
+                    )}
 
                 </div>
 

@@ -1,13 +1,19 @@
 import { NextResponse } from "next/server";
+
 import Wishlist from "@/lib/model/wishlist";
-import { verifyToken } from "@/lib/verifyToken";
 import { dbConnect } from "@/lib/dbConnect";
+import { verifyToken } from "@/lib/verifyToken";
 
 export async function DELETE(request) {
     try {
         await dbConnect();
 
         const decoded = verifyToken(request);
+
+        console.log(
+            "REMOVE WISHLIST DECODED USER:",
+            decoded
+        );
 
         if (!decoded) {
             return NextResponse.json(
@@ -23,9 +29,19 @@ export async function DELETE(request) {
 
         const userId = decoded.id;
 
-        const body = await request.json();
+        if (!userId) {
+            return NextResponse.json(
+                {
+                    success: false,
+                    message: "Invalid user token",
+                },
+                {
+                    status: 401,
+                }
+            );
+        }
 
-        const { productId } = body;
+        const { productId } = await request.json();
 
         if (!productId) {
             return NextResponse.json(
@@ -62,6 +78,12 @@ export async function DELETE(request) {
 
         await wishlist.save();
 
+
+        // IMPORTANT
+        // Remove ke baad products ko dobara populate karo
+        await wishlist.populate("products");
+
+
         return NextResponse.json(
             {
                 success: true,
@@ -76,7 +98,7 @@ export async function DELETE(request) {
     } catch (error) {
 
         console.error(
-            "REMOVE WISHLIST ERROR:",
+            "REMOVE WISHLIST ROUTE ERROR:",
             error
         );
 
@@ -84,6 +106,7 @@ export async function DELETE(request) {
             {
                 success: false,
                 message: "Failed to remove wishlist",
+                error: error.message,
             },
             {
                 status: 500,
