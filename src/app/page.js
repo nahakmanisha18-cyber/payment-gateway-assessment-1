@@ -1,5 +1,4 @@
 "use client";
-
 import HomePage from "@/Components/Common/HomePage/HomePage";
 
 // import { useEffect } from "react";

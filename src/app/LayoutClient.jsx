@@ -2,6 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import Header from "@/Components/Common/Header/Header";
+import BottomNav from "@/Components/Common/BottomTabBar/BottomNav";
 
 export default function LayoutClient({ children }) {
 
@@ -14,6 +15,8 @@ export default function LayoutClient({ children }) {
             {!isAdmin && <Header />}
 
             {children}
+
+            {!isAdmin && <BottomNav />}
         </>
     );
 }

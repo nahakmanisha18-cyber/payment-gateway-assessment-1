@@ -340,7 +340,7 @@ const HomePage = () => {
                     </button>
 
                     {product.discountPrice > 0 && (
-                        <span className="wishlist-discount">
+                        <span className="product-discount">
                             SALE
                         </span>
                     )}

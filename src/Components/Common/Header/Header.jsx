@@ -42,7 +42,7 @@ const Header = () => {
         const result = await dispatch(logout());
 
         if (logout.fulfilled.match(result)) {
-            router.push("/"); 
+            router.push("/");
         }
     };
 
@@ -67,7 +67,7 @@ const Header = () => {
         }
 
     }, [user, dispatch]);
-    
+
     const handleSearch = (e) => {
         e.preventDefault();
 
@@ -112,36 +112,40 @@ const Header = () => {
                                     Login
                                 </button>
                             ) : (
-                                <Dropdown align="end">
-                                        
-                                            <Dropdown.Toggle
-                                                className="profile-btn"
-                                                variant="light"
-                                            >
-                                                <img
-                                                    src={user?.profileImage || "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"}
-                                                    alt="Profile"
-                                                    className="header-profile-img"
-                                                />
-                                            </Dropdown.Toggle>
 
-                                    <Dropdown.Menu>
-                                        <Dropdown.Item as={Link} href="/profile">
-                                            My Profile
-                                        </Dropdown.Item>
 
-                                        <Dropdown.Item onClick={handleLogout}>
-                                            Logout
-                                        </Dropdown.Item>
-                                    </Dropdown.Menu>
-                                </Dropdown>
+                                < div className="mobile-auth">
+                                    {!user ? (
+                                        <button
+                                            className="login-btn"
+                                            onClick={() => setShowLogin(true)}
+                                        >
+                                            Login
+                                        </button>
+                                    ) : (
+                                        <Link
+                                            href="/profile"
+                                            className="mobile-profile-link"
+                                        >
+                                            <img
+                                                src={
+                                                    user?.profileImage ||
+                                                    "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"
+                                                }
+                                                alt="Profile"
+                                                className="header-profile-img"
+                                            />
+                                        </Link>
+                                    )}
+                                </div>
                             )}
                         </div>
 
 
                         {/* Search */}
-
-                       <Search/>
+                        <div className="header-search">
+                            <Search />
+                        </div>
 
 
 
@@ -156,7 +160,6 @@ const Header = () => {
                                         <Link href="/wishlist" className={`header-action ${pathname === "/wishlist" ? "active" : ""}`}>
                                             <div className="action-icon">
                                                 <FaHeart />
-                                                <span className="badge-count">2</span>
                                             </div>
                                             <span className="action-text">Wishlist</span>
                                         </Link>
@@ -222,7 +225,7 @@ const Header = () => {
 
                                         <Link
                                             href="/wishlist"
-                                            className={`header-action ${pathname === "/wishlist" ? "active" : "" }`}
+                                            className={`header-action ${pathname === "/wishlist" ? "active" : ""}`}
                                         >
                                             <div className="action-icon">
 
@@ -358,9 +361,9 @@ const Header = () => {
 
                     </div>
                 </Container>
-            </Navbar>
+            </Navbar >
 
-            
+
         </>
     );
 };

@@ -806,8 +806,27 @@
 
     padding: 10px;
 }
+/* =========================================
+   DISCOUNT
+========================================= */
+.product-discount {
+    position: absolute;
 
+    top: 12px;
+    left: 12px;
 
+    padding: 5px 9px;
+
+    border-radius: 5px;
+
+    background: #2878f0;
+
+    color: #ffffff;
+
+    font-size: 10px;
+
+    font-weight: 700;
+}
 
 /* =========================================
    WISHLIST

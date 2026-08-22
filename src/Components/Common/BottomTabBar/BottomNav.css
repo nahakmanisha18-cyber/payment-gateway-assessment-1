@@ -1,0 +1,151 @@
+/* =====================================
+   BOTTOM NAVIGATION
+===================================== */
+
+.bottom-nav {
+    display: none;
+}
+/* =========================================
+   BOTTOM NAV ICON
+========================================= */
+
+.bottom-nav-icon {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+/* =========================================
+   CART / WISHLIST BADGE
+========================================= */
+
+.bottom-nav-badge {
+    position: absolute;
+
+    top: -9px;
+    right: -12px;
+
+    min-width: 17px;
+    height: 17px;
+
+    padding: 0 4px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #ef4444;
+    color: white;
+
+    border-radius: 50%;
+
+    font-size: 10px;
+    font-weight: 700;
+
+    line-height: 1;
+
+    border: 2px solid white;
+}
+
+/* =====================================
+   TABLET + MOBILE
+===================================== */
+
+@media (max-width: 992px) {
+
+    .bottom-nav {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+
+        width: 100%;
+        height: 70px;
+
+        background: #fff;
+
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+
+        border-top: 1px solid #eee;
+
+        box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.08);
+
+        z-index: 9999;
+    }
+
+
+    /* NAV ITEM */
+
+    .bottom-nav-item {
+        flex: 1;
+
+        display: flex;
+        flex-direction: column;
+
+        align-items: center;
+        justify-content: center;
+
+        gap: 5px;
+
+        color: #777;
+
+        text-decoration: none;
+
+        font-size: 11px;
+
+        transition: all 0.3s ease;
+    }
+
+
+    /* ICON */
+
+    .bottom-nav-item svg {
+        font-size: 21px;
+
+        transition: all 0.3s ease;
+    }
+
+
+    /* ACTIVE */
+
+    .bottom-nav-item.active {
+        color: #0d6efd;
+        font-weight: 600;
+    }
+
+
+    .bottom-nav-item.active svg {
+        transform: translateY(-3px);
+    }
+
+
+    /* HOVER */
+
+    .bottom-nav-item:hover {
+        color: #0d6efd;
+    }
+}
+
+
+/* =====================================
+   SMALL MOBILE
+===================================== */
+
+@media (max-width: 480px) {
+
+    .bottom-nav {
+        height: 65px;
+    }
+
+    .bottom-nav-item {
+        font-size: 10px;
+    }
+
+    .bottom-nav-item svg {
+        font-size: 19px;
+    }
+}
